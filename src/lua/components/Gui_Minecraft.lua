@@ -507,8 +507,8 @@ function p.Trading(f)
         images = {
             { file = "GUI Furnace Arrow.png", x = 51, y = 5, width = 22, height = 16 },
         },
-        border = false,
-        padding = false,
+        border = args.border,
+        padding = args.padding,
     })
 
     return tostring(gui)
