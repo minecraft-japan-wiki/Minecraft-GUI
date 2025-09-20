@@ -614,6 +614,165 @@ function p.LegacySmithingTable(f)
     return tostring(gui)
 end
 
+function p.Chest(f)
+    local args = f
+    if f == mw.getCurrentFrame() then
+        args = require('Module:ProcessArgs').merge(true)
+    else
+        f = mw.getCurrentFrame()
+    end
+
+    local gui = GuiUtils.new({
+        name = "chest",
+        width = 162,
+        height = 65,
+        scale = 2,
+        images = {
+            { file = "GUI Chest Title.png", x = 1, y = 0, width = 27, height = 7 },
+        },
+        border = args.border,
+        padding = args.padding,
+    })
+
+    -- slots
+    local chars = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I' }
+    for y = 1, 3 do
+        for x, v in ipairs(chars) do
+            local idx = ((y - 1) * 9) + x
+            gui:insertSlot({
+                x = (x - 1) * 18,
+                y = 11 + (y - 1) * 18,
+                value = args[v .. tostring(y)] or args["slot" .. tostring(idx)] or args[idx]
+            })
+        end
+    end
+
+    return tostring(gui)
+end
+
+function p.EnderChest(f)
+    local args = f
+    if f == mw.getCurrentFrame() then
+        args = require('Module:ProcessArgs').merge(true)
+    else
+        f = mw.getCurrentFrame()
+    end
+
+    local gui = GuiUtils.new({
+        name = "ender-chest",
+        width = 162,
+        height = 65,
+        scale = 2,
+        images = {
+            { file = "GUI Ender Chest Title.png", x = 1, y = 0, width = 61, height = 7 },
+        },
+        border = args.border,
+        padding = args.padding,
+    })
+
+    -- slots
+    local chars = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I' }
+    for y = 1, 3 do
+        for x, v in ipairs(chars) do
+            local idx = ((y - 1) * 9) + x
+            gui:insertSlot({
+                x = (x - 1) * 18,
+                y = 11 + (y - 1) * 18,
+                value = args[v .. tostring(y)] or args["slot" .. tostring(idx)] or args[idx]
+            })
+        end
+    end
+
+    return tostring(gui)
+end
+
+function p.LargeChest(f)
+    local args = f
+    if f == mw.getCurrentFrame() then
+        args = require('Module:ProcessArgs').merge(true)
+    else
+        f = mw.getCurrentFrame()
+    end
+
+    local gui = GuiUtils.new({
+        name = "large-chest",
+        width = 162,
+        height = 119,
+        scale = 2,
+        images = {
+            { file = "GUI Large Chest Title.png", x = 1, y = 0, width = 61, height = 8 },
+        },
+        border = args.border,
+        padding = args.padding,
+    })
+
+    -- slots
+    local chars = { 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I' }
+    for y = 1, 6 do
+        for x, v in ipairs(chars) do
+            local idx = ((y - 1) * 9) + x
+            gui:insertSlot({
+                x = (x - 1) * 18,
+                y = 11 + (y - 1) * 18,
+                value = args[v .. tostring(y)] or args["slot" .. tostring(idx)] or args[idx]
+            })
+        end
+    end
+
+    return tostring(gui)
+end
+
+function p.Hotbar(f)
+    local args = f
+    if f == mw.getCurrentFrame() then
+        args = require('Module:ProcessArgs').merge(true)
+    else
+        f = mw.getCurrentFrame()
+    end
+
+    local gui = GuiUtils.new({
+        name = "hotbar",
+        height = 24,
+        width = 184,
+        background = false,
+        border = false,
+        padding = false,
+    })
+
+    local offhand = args.offhand or args.slot10 or args[10]
+    local side = string.lower(args.side or "")
+
+    local px = 0
+    if side == "r" or side == "right" then
+        gui:insertImage({ x = 190, y = 1, width = 22, height = 22, file = "GUI Hotbar offhand right.png" })
+            :insertSlot({ x = 192, y = 3, value = offhand, background = false })
+    elseif offhand or side == "l" or side == "left" then
+        px = 28
+        gui:insertImage({ x = 0, y = 1, width = 22, height = 22, file = "GUI Hotbar offhand left.png" })
+            :insertSlot({ x = 2, y = 3, value = offhand, background = false })
+    end
+
+    -- hotbar
+    gui:insertImage({ x = 1 + px, y = 1, width = 182, height = 22, file = "GUI Hotbar base.png" })
+    for i = 1, 9 do
+        gui:insertSlot({
+            x = 3 + (i - 1) * 20 + px,
+            y = 3,
+            value = args["slot" .. tostring(i)] or args[i],
+            background = false
+        })
+    end
+
+    -- selected
+    local selected = tonumber(args.selected) or tonumber(args.select)
+    if selected and selected >= 1 and selected <= 9 then
+        selected = math.floor(selected)
+        gui:insertImage({ x = (selected - 1) * 20, y = 0, width = 24, height = 24, file = "GUI Hotbar selected.png", css = { ["z-index"] = 2 } })
+    end
+
+    return tostring(gui)
+end
+
 function p.CompoundCreator(f)
     local args = f
     if f == mw.getCurrentFrame() then
@@ -689,7 +848,7 @@ function p.LabTable(f)
     local valueLength = #slotItems
     local slotLength  = math.max(6, valueLength)
     local width       = slotLength * 18
-    gui:setWidth(18)
+    gui:setWidth(width)
 
     for i = 1, slotLength do
         gui:insertSlot({ x = (i - 1) * 18, y = 0, amount = 1 })

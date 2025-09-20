@@ -49,8 +49,8 @@
     border-color: #373737 #FFF #FFF #373737;
 }
 
-.mjwgui .mjwgui-slot:not(.mjwgui-slot--nobg):not(.mjwgui-slot--large):hover:after,
-.mjwgui .mjwgui-slot.mjwgui-slot--large:not(.mjwgui-slot--nobg) .mjwgui-slot--inner:hover:after {
+.mjwgui .mjwgui-slot:not(.mjwgui-slot--large):hover:after,
+.mjwgui .mjwgui-slot.mjwgui-slot--large .mjwgui-slot--inner:hover:after {
     content: "";
     display: block;
     position: absolute;
