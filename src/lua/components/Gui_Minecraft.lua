@@ -1,6 +1,5 @@
 local p = {}
-local GuiUtils = require("Module:Gui/sandbox")
-local Yesno = require("Module:Yesno")
+local GuiUtils = require("Module:Gui")
 
 function p.base(f)
     local args = f

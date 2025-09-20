@@ -1,12 +1,11 @@
 local p = {}
 local t = {}
 local GUI_METATABLE = {}
-local Yesno = require("Module:Yesno")
+local IS_STACK_SIZE_TEXT = false
+
 local slotUtils = require("Module:Slot/utils")
-local TableUtil = require("Module:TableUtil")
 local animate = require('Module:AnimateFrame')
 
-local IS_STACK_SIZE_TEXT = false
 
 local function split(inputstr, sep)
     if sep == nil then
