@@ -83,6 +83,7 @@ async function main() {
         { target: "src/lua/Slot.lua", dist: "Module:Slot/utils" },
         { target: "src/lua/Gui.lua", dist: "Module:Gui" },
         // lua components
+        { target: "src/lua/components/Gui_Minecraft.lua", dist: "Module:Gui/Minecraft" },
         { target: "src/lua/components/Gui_Botania.lua", dist: "Module:Gui/Botania" },
         { target: "src/lua/components/Gui_BuildCraft.lua", dist: "Module:Gui/BuildCraft" },
         { target: "src/lua/components/Gui_EnderIO.lua", dist: "Module:Gui/EnderIO" },
