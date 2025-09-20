@@ -1,5 +1,4 @@
 local p = {}
-local t = {}
 local GUI_METATABLE = {}
 local IS_STACK_SIZE_TEXT = false
 
@@ -32,95 +31,176 @@ local function nonNilValues(default, ...)
 end
 
 
+local t = {
+    ------ generate sprite
+    generateSlot = function(slot, config)
+        config = config or {}
+        local sub = mw.html.create("span")
+        -- amount
+        local amount = config.amount
 
------- generate sprite -------
-function t.generateSlot(slot, config)
-    config = config or {}
-    local sub = mw.html.create("span")
-    -- amount
-    local amount = config.amount
+        -- scale
+        local scale = tonumber(config.scale) or 2
 
-    -- scale
-    local scale = tonumber(config.scale) or 2
+        -- placeholder (slot icon)
+        if config.placeholder then
+            local placeholder
+            if config.showPlaceholder then
+                placeholder = slotUtils.getSprite("SlotSprite:" .. config.placeholder)[1]
+            elseif (not config.showPlaceholder) and (not slot) then
+                placeholder = slotUtils.getSprite("SlotSprite:" .. config.placeholder)[1]
+            end
 
-    -- placeholder (slot icon)
-    if config.placeholder then
-        local placeholder
-        if config.showPlaceholder then
-            placeholder = slotUtils.getSprite("SlotSprite:" .. config.placeholder)[1]
-        elseif (not config.showPlaceholder) and (not slot) then
-            placeholder = slotUtils.getSprite("SlotSprite:" .. config.placeholder)[1]
+            if placeholder then
+                sub:tag("span")
+                    :addClass("mjwgui-placeholder")
+                    :wikitext(placeholder)
+            end
         end
 
-        if placeholder then
-            sub:tag("span")
-                :addClass("mjwgui-placeholder")
-                :wikitext(placeholder)
-        end
-    end
+        -- show sprite
+        if slot then
+            sub:wikitext(slot)
 
-    -- show sprite
-    if slot then
-        sub:wikitext(slot)
+            if amount ~= 1 or config.showStacksize then
+                local sub_overlay = sub:tag("span")
+                sub_overlay:addClass('mjwgui-slot-nfr')
 
-        if amount ~= 1 or config.showStacksize then
-            local sub_overlay = sub:tag("span")
-            sub_overlay:addClass('mjwgui-slot-nfr')
+                local num_len = string.len(tostring(amount))
 
-            local num_len = string.len(tostring(amount))
-
-            for j = 1, num_len, 1 do
-                local chr = string.sub(tostring(amount), j, j)
-                local num = tonumber(chr) or 10
-                local overlay_num = sub_overlay:tag("span")
-                overlay_num:addClass('mjwgui-slot-stacksize')
-                if IS_STACK_SIZE_TEXT then
-                    overlay_num:wikitext(num)
-                    if amount < 1 then
-                        overlay_num:addClass('mjwgui-slot-stacksize--negative')
+                for j = 1, num_len, 1 do
+                    local chr = string.sub(tostring(amount), j, j)
+                    local num = tonumber(chr) or 10
+                    local overlay_num = sub_overlay:tag("span")
+                    overlay_num:addClass('mjwgui-slot-stacksize')
+                    if IS_STACK_SIZE_TEXT then
+                        overlay_num:wikitext(num)
+                        if amount < 1 then
+                            overlay_num:addClass('mjwgui-slot-stacksize--negative')
+                        end
+                    else
+                        overlay_num
+                            :addClass("mjwgui-slot-stacksize-num")
+                            :css("background-position", "-" .. tostring(num * 12) .. "px -0px")
                     end
-                else
-                    overlay_num
-                        :addClass("mjwgui-slot-stacksize-num")
-                        :css("background-position", "-" .. tostring(num * 12) .. "px -0px")
                 end
             end
         end
-    end
 
 
-    -- large
-    if config.large then
-        local largeSub = mw.html.create("span")
-            :addClass("mjwgui-slot")
-            :addClass("mjwgui-slot--large")
-            :node(sub:addClass("mjwgui-slot--inner"))
+        -- large
+        if config.large then
+            local largeSub = mw.html.create("span")
+                :addClass("mjwgui-slot")
+                :addClass("mjwgui-slot--large")
+                :node(sub:addClass("mjwgui-slot--inner"))
+
+            -- nobg
+            if not nonNilValues(true, config.background) then
+                largeSub:addClass("mjwgui-slot--nobg")
+            end
+
+            -- position
+            if type(config.x) == "number" and config.x ~= 0 then
+                largeSub:css("left", tostring(config.x * scale) .. "px")
+            end
+            if type(config.y) == "number" and config.y ~= 0 then
+                largeSub:css("top", tostring(config.y * scale) .. "px")
+            end
+
+            -- css
+            if config.css then
+                largeSub:css(config.css)
+            end
+
+            return largeSub
+        else
+            sub:addClass("mjwgui-slot")
+
+            --nobg
+            if not nonNilValues(true, config.background) then
+                sub:addClass("mjwgui-slot--nobg")
+            end
+
+            -- position
+            if type(config.x) == "number" and config.x ~= 0 then
+                sub:css("left", tostring(config.x * scale) .. "px")
+            end
+            if type(config.y) == "number" and config.y ~= 0 then
+                sub:css("top", tostring(config.y * scale) .. "px")
+            end
+
+            -- css
+            if config.css then
+                sub:css(config.css)
+            end
+
+            return sub
+        end
+    end,
+
+    ------ generate tank
+    generateTank = function(slot, config)
+        config = config or {}
+        local sub = mw.html.create("span")
+
+        -- amount
+        local amount = tonumber(config.amount) or 1
+        local max = tonumber(config.max) or amount
+        local currentProgress = 0
+        if max ~= 0 then
+            currentProgress = math.floor((amount / max) * 100)
+            if currentProgress > 100 then
+                currentProgress = 1
+            elseif currentProgress < 0 then
+                currentProgress = 0
+            end
+        end
+
+        -- scale
+        local scale = tonumber(config.scale) or 2
 
         -- nobg
+        sub:addClass("mjwgui-tank")
         if not nonNilValues(true, config.background) then
-            largeSub:addClass("mjwgui-slot--nobg")
+            sub:addClass("mjwgui-tank--nobg")
         end
 
-        -- position
-        if type(config.x) == "number" and config.x ~= 0 then
-            largeSub:css("left", tostring(config.x * scale) .. "px")
-        end
-        if type(config.y) == "number" and config.y ~= 0 then
-            largeSub:css("top", tostring(config.y * scale) .. "px")
+        -- tank inner
+        local direction = config.direction
+        local fluid = sub:tag("span"):addClass("mjwgui-tank-inner")
+
+
+        if direction == "right" then
+            fluid
+                :addClass("mjwgui-tank--right")
+                :css("width", tostring(currentProgress) .. "%")
+        elseif direction == "down" then
+            fluid
+                :addClass("mjwgui-tank--down")
+                :css("height", tostring(currentProgress) .. "%")
+        elseif direction == "left" then
+            fluid
+                :addClass("mjwgui-tank--left")
+                :css("width", tostring(currentProgress) .. "%")
+        else -- up
+            fluid
+                :addClass("mjwgui-tank--up")
+                :css("height", tostring(currentProgress) .. "%")
         end
 
-        -- css
-        if config.css then
-            largeSub:css(config.css)
+        -- tank sprite
+        local sprite = sub:tag("span"):addClass("mjwgui-tank-item")
+        if slot then
+            sprite:wikitext(slot)
         end
 
-        return largeSub
-    else
-        sub:addClass("mjwgui-slot")
-
-        --nobg
-        if not nonNilValues(true, config.background) then
-            sub:addClass("mjwgui-slot--nobg")
+        -- size
+        if type(config.width) == "number" and config.width >= 0 then
+            sub:css("width", tostring(config.width * scale) .. "px")
+        end
+        if type(config.height) == "number" and config.height >= 0 then
+            sub:css("height", tostring(config.height * scale) .. "px")
         end
 
         -- position
@@ -137,268 +217,226 @@ function t.generateSlot(slot, config)
         end
 
         return sub
-    end
-end
+    end,
 
------- generate tank -------
-function t.generateTank(slot, config)
-    config = config or {}
-    local sub = mw.html.create("span")
+    ------ generate text
+    generateText = function(text, config)
+        config = config or {}
+        local sub = mw.html.create("span")
+            :addClass("mjwgui-text")
 
-    -- amount
-    local amount = tonumber(config.amount) or 1
-    local max = tonumber(config.max) or amount
-    local currentProgress = 0
-    if max ~= 0 then
-        currentProgress = math.floor((amount / max) * 100)
-        if currentProgress > 100 then
+        -- scale
+        local scale = tonumber(config.scale) or 2
+
+        -- decoration
+        local isMinetext = false
+        local function setMineText()
+            if not isMinetext then
+                sub:addClass("minecraft-text")
+                isMinetext = true
+            end
+        end
+
+        if config.color then
+            setMineText()
+            sub:addClass("minecraft-text-" .. config.color)
+        end
+        if config.bold then
+            setMineText()
+            sub:addClass("minecraft-text-bold")
+        end
+        if config.strike then
+            setMineText()
+            sub:addClass("minecraft-text-strike")
+        end
+        if config.underline then
+            setMineText()
+            sub:addClass("minecraft-text-underline")
+        end
+        if config.obfuscated then
+            setMineText()
+            sub:addClass("minecraft-text-obfuscated")
+        end
+
+        -- position
+        if type(config.x) == "number" and config.x ~= 0 then
+            sub:css("left", tostring(config.x * scale) .. "px")
+        end
+        if type(config.y) == "number" and config.y ~= 0 then
+            sub:css("top", tostring(config.y * scale) .. "px")
+        end
+
+        -- line height
+        if type(config.height) == "number" then
+            if config.height > 0 then
+                sub:css("line-height", tostring(config.height * scale) .. "px")
+            end
+        elseif type(config.size) == "number" then
+            if config.size > 0 then
+                sub:css("line-height", tostring(config.size) .. "px")
+            end
+        end
+
+        -- size
+        local fontsize = config.size
+        if type(fontsize) == "number" then
+            fontsize = tostring(fontsize) .. "px"
+        end
+        if type(fontsize) == "string" then
+            sub:css("font-size", fontsize)
+        end
+
+        -- css
+        if config.css then
+            sub:css(config.css)
+        end
+
+        --text
+        local str = text
+        if type(config.prefix) == "string" and string.len(text) > 0 then
+            str = config.prefix .. str
+        end
+        if type(config.suffix) == "string" and string.len(text) > 0 then
+            str = str .. config.suffix
+        end
+        sub:wikitext(str)
+
+        return sub
+    end,
+
+    ------ generate gauge
+    generateGauge = function(value, maxValue, config)
+        local frame = mw.getCurrentFrame()
+        config = config or {}
+        local sub = mw.html.create("span")
+            :addClass("mjwgui-gauge")
+
+        -- scale
+        local scale = tonumber(config.scale) or 2
+
+        -- size
+        local width = (tonumber(config.width) or 0) * scale
+        local height = (tonumber(config.height) or 0) * scale
+        if width > 0 then
+            sub:css("width", tostring(width) .. "px")
+        end
+        if height > 0 then
+            sub:css("height", tostring(height) .. "px")
+        end
+
+        -- position
+        if type(config.x) == "number" and config.x ~= 0 then
+            sub:css("left", tostring(config.x * scale) .. "px")
+        end
+        if type(config.y) == "number" and config.y ~= 0 then
+            sub:css("top", tostring(config.y * scale) .. "px")
+        end
+
+        -- inner
+        local fluid = sub:tag("span"):addClass("mjwgui-gauge-item")
+
+        -- image
+        local imageSize = ""
+        if width > 0 then
+            imageSize = imageSize .. tostring(width)
+        end
+        if height > 0 then
+            imageSize = imageSize .. "x" .. tostring(height)
+        end
+        if string.len(imageSize) > 0 then
+            imageSize = imageSize .. "px"
+        end
+        fluid:wikitext(frame:preprocess("[[File:" .. config.file .. "|link=|alt=|" .. imageSize .. "]]"))
+
+        -- repeat
+        if config["repeat"] then
+            fluid:addClass("mjwgui-gauge--repeat")
+        end
+
+        -- progress
+        local volume = tonumber(value) or 0
+        local maxVolume = tonumber(maxValue) or tonumber(config.max) or 0
+        local currentProgress = 1
+        if maxVolume == 0 then
             currentProgress = 1
-        elseif currentProgress < 0 then
-            currentProgress = 0
+        else
+            currentProgress = volume / maxVolume
         end
-    end
 
-    -- scale
-    local scale = tonumber(config.scale) or 2
+        if currentProgress > 1 then currentProgress = 1 end
+        if currentProgress < 0 then currentProgress = 0 end
+        currentProgress = math.floor(currentProgress * 100)
 
-    -- nobg
-    sub:addClass("mjwgui-tank")
-    if not nonNilValues(true, config.background) then
-        sub:addClass("mjwgui-tank--nobg")
-    end
-
-    -- tank inner
-    local direction = config.direction
-    local fluid = sub:tag("span"):addClass("mjwgui-tank-inner")
-
-
-    if direction == "right" then
-        fluid
-            :addClass("mjwgui-tank--right")
-            :css("width", tostring(currentProgress) .. "%")
-    elseif direction == "down" then
-        fluid
-            :addClass("mjwgui-tank--down")
-            :css("height", tostring(currentProgress) .. "%")
-    elseif direction == "left" then
-        fluid
-            :addClass("mjwgui-tank--left")
-            :css("width", tostring(currentProgress) .. "%")
-    else -- up
-        fluid
-            :addClass("mjwgui-tank--up")
-            :css("height", tostring(currentProgress) .. "%")
-    end
-
-    -- tank sprite
-    local sprite = sub:tag("span"):addClass("mjwgui-tank-item")
-    if slot then
-        sprite:wikitext(slot)
-    end
-
-    -- size
-    if type(config.width) == "number" and config.width >= 0 then
-        sub:css("width", tostring(config.width * scale) .. "px")
-    end
-    if type(config.height) == "number" and config.height >= 0 then
-        sub:css("height", tostring(config.height * scale) .. "px")
-    end
-
-    -- position
-    if type(config.x) == "number" and config.x ~= 0 then
-        sub:css("left", tostring(config.x * scale) .. "px")
-    end
-    if type(config.y) == "number" and config.y ~= 0 then
-        sub:css("top", tostring(config.y * scale) .. "px")
-    end
-
-    -- css
-    if config.css then
-        sub:css(config.css)
-    end
-
-    return sub
-end
-
------- generate text -------
-function t.generateText(text, config)
-    config = config or {}
-    local sub = mw.html.create("span")
-        :addClass("mjwgui-text")
-
-    -- scale
-    local scale = tonumber(config.scale) or 2
-
-    -- decoration
-    local isMinetext = false
-    local function setMineText()
-        if not isMinetext then
-            sub:addClass("minecraft-text")
-            isMinetext = true
+        -- direction
+        local direction = config.direction
+        if direction == "right" then
+            fluid
+                :css("top", 0)
+                :css("left", 0)
+                :css("width", tostring(currentProgress) .. "%")
+        elseif direction == "down" then
+            fluid
+                :css("top", 0)
+                :css("left", 0)
+                :css("height", tostring(currentProgress) .. "%")
+        elseif direction == "left" then
+            fluid
+                :css("bottom", 0)
+                :css("right", 0)
+                :css("width", tostring(currentProgress) .. "%")
+        else -- up
+            fluid
+                :css("bottom", 0)
+                :css("right", 0)
+                :css("height", tostring(currentProgress) .. "%")
         end
-    end
 
-    if config.color then
-        setMineText()
-        sub:addClass("minecraft-text-" .. config.color)
-    end
-    if config.bold then
-        setMineText()
-        sub:addClass("minecraft-text-bold")
-    end
-    if config.strike then
-        setMineText()
-        sub:addClass("minecraft-text-strike")
-    end
-    if config.underline then
-        setMineText()
-        sub:addClass("minecraft-text-underline")
-    end
-    if config.obfuscated then
-        setMineText()
-        sub:addClass("minecraft-text-obfuscated")
-    end
-
-    -- position
-    if type(config.x) == "number" and config.x ~= 0 then
-        sub:css("left", tostring(config.x * scale) .. "px")
-    end
-    if type(config.y) == "number" and config.y ~= 0 then
-        sub:css("top", tostring(config.y * scale) .. "px")
-    end
-
-    -- line height
-    if type(config.height) == "number" then
-        if config.height > 0 then
-            sub:css("line-height", tostring(config.height * scale) .. "px")
+        -- css
+        if config.css then
+            sub:css(config.css)
         end
-    elseif type(config.size) == "number" then
-        if config.size > 0 then
-            sub:css("line-height", tostring(config.size) .. "px")
+
+        return sub
+    end,
+
+    -------------------------
+    ------ create outer
+    createOuter = function(gui_object)
+        local outer = mw.html.create("span"):addClass("mjwgui")
+
+        -- class
+        if type(gui_object.name) == "string" then
+            outer:addClass("mjwgui_" .. gui_object.name)
         end
-    end
 
-    -- size
-    local fontsize = config.size
-    if type(fontsize) == "number" then
-        fontsize = tostring(fontsize) .. "px"
-    end
-    if type(fontsize) == "string" then
-        sub:css("font-size", fontsize)
-    end
+        local tableSettingClasses = {}
+        if type(gui_object.class) == "string" then
+            tableSettingClasses = { gui_object.class }
+        elseif type(gui_object.class) == "table" then
+            tableSettingClasses = gui_object.class
+        end
+        for _, class in ipairs(tableSettingClasses) do
+            if type(class) == "string" then
+                outer:addClass(class)
+            end
+        end
 
-    -- css
-    if config.css then
-        sub:css(config.css)
-    end
+        -- styles
+        if gui_object.padding ~= nil and not gui_object.padding then
+            outer:css("padding", '0')
+        end
+        if not gui_object.border then
+            outer:css("border", 'none')
+        end
+        if gui_object.background ~= nil and not gui_object.background then
+            outer:css("background", "transparent")
+        elseif type(gui_object.background) == "string" then
+            outer:css("background", gui_object.background)
+        end
 
-    --text
-    local str = text
-    if type(config.prefix) == "string" and string.len(text) > 0 then
-        str = config.prefix .. str
-    end
-    if type(config.suffix) == "string" and string.len(text) > 0 then
-        str = str .. config.suffix
-    end
-    sub:wikitext(str)
-
-    return sub
-end
-
------- generate gauge -------
-function t.generateGauge(value, maxValue, config)
-    local frame = mw.getCurrentFrame()
-    config = config or {}
-    local sub = mw.html.create("span")
-        :addClass("mjwgui-gauge")
-
-    -- scale
-    local scale = tonumber(config.scale) or 2
-
-    -- size
-    local width = (tonumber(config.width) or 0) * scale
-    local height = (tonumber(config.height) or 0) * scale
-    if width > 0 then
-        sub:css("width", tostring(width) .. "px")
-    end
-    if height > 0 then
-        sub:css("height", tostring(height) .. "px")
-    end
-
-    -- position
-    if type(config.x) == "number" and config.x ~= 0 then
-        sub:css("left", tostring(config.x * scale) .. "px")
-    end
-    if type(config.y) == "number" and config.y ~= 0 then
-        sub:css("top", tostring(config.y * scale) .. "px")
-    end
-
-    -- inner
-    local fluid = sub:tag("span"):addClass("mjwgui-gauge-item")
-
-    -- image
-    local imageSize = ""
-    if width > 0 then
-        imageSize = imageSize .. tostring(width)
-    end
-    if height > 0 then
-        imageSize = imageSize .. "x" .. tostring(height)
-    end
-    if string.len(imageSize) > 0 then
-        imageSize = imageSize .. "px"
-    end
-    fluid:wikitext(frame:preprocess("[[File:" .. config.file .. "|link=|alt=|" .. imageSize .. "]]"))
-
-    -- repeat
-    if config["repeat"] then
-        fluid:addClass("mjwgui-gauge--repeat")
-    end
-
-    -- progress
-    local volume = tonumber(value) or 0
-    local maxVolume = tonumber(maxValue) or tonumber(config.max) or 0
-    local currentProgress = 1
-    if maxVolume == 0 then
-        currentProgress = 1
-    else
-        currentProgress = volume / maxVolume
-    end
-
-    if currentProgress > 1 then currentProgress = 1 end
-    if currentProgress < 0 then currentProgress = 0 end
-    currentProgress = math.floor(currentProgress * 100)
-
-    -- direction
-    local direction = config.direction
-    if direction == "right" then
-        fluid
-            :css("top", 0)
-            :css("left", 0)
-            :css("width", tostring(currentProgress) .. "%")
-    elseif direction == "down" then
-        fluid
-            :css("top", 0)
-            :css("left", 0)
-            :css("height", tostring(currentProgress) .. "%")
-    elseif direction == "left" then
-        fluid
-            :css("bottom", 0)
-            :css("right", 0)
-            :css("width", tostring(currentProgress) .. "%")
-    else -- up
-        fluid
-            :css("bottom", 0)
-            :css("right", 0)
-            :css("height", tostring(currentProgress) .. "%")
-    end
-
-    -- css
-    if config.css then
-        sub:css(config.css)
-    end
-
-    return sub
-end
+        return outer
+    end,
+}
 
 -------------------------
 -- create
@@ -408,45 +446,15 @@ function GUI_METATABLE.create(gui_object)
 
     -------------------------
     -- outer
-    local outer = mw.html.create("span"):addClass("mjwgui")
-
-    -- class
-    if type(gui_object.name) == "string" then
-        outer:addClass("mjwgui_" .. gui_object.name)
-    end
-
-    local tableSettingClasses = {}
-    if type(gui_object.class) == "string" then
-        tableSettingClasses = { gui_object.class }
-    elseif type(gui_object.class) == "table" then
-        tableSettingClasses = gui_object.class
-    end
-    for _, class in ipairs(tableSettingClasses) do
-        if type(class) == "string" then
-            outer:addClass(class)
-        end
-    end
-
-    -- styles
-    if gui_object.padding ~= nil and not gui_object.padding then
-        outer:css("padding", '0')
-    end
-    if not gui_object.border then
-        outer:css("border", 'none')
-    end
-    if gui_object.background ~= nil and not gui_object.background then
-        outer:css("background", "transparent")
-    elseif type(gui_object.background) == "string" then
-        outer:css("background", gui_object.background)
-    end
+    local outer = t.createOuter(gui_object)
 
     --------------------------------------
     -- sheet
     local gui = outer:tag("span"):addClass('mjwgui-sheet')
 
     -- styles
-    local boxWidth = tonumber(gui_object.width) or 2
-    local boxHeight = tonumber(gui_object.height) or 2
+    local boxWidth = tonumber(gui_object.width) or 50
+    local boxHeight = tonumber(gui_object.height) or 50
     local scale = tonumber(gui_object.scale) or 2
     if boxWidth > 0 and boxHeight > 0 then
         gui
