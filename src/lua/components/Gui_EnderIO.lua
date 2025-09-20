@@ -61,6 +61,8 @@ function p.SAGMill(f)
         f = mw.getCurrentFrame()
     end
 
+    local ball = args.ball1 or args.input2 or args.ball or args.slot6 or args[6]
+
     local gui = GuiUtils.new({
         name = "enderio-sag-mill",
         width = 99,
@@ -72,6 +74,7 @@ function p.SAGMill(f)
             { x = 21, y = 47, value = args.output2 or args.target2 or args.slot3 or args[3] },
             { x = 42, y = 47, value = args.output3 or args.target3 or args.slot4 or args[4] },
             { x = 63, y = 47, value = args.output4 or args.target4 or args.slot5 or args[5] },
+            { x = 73, y = 11, value = ball },
         },
         images = {
             { x = 31, y = 20, width = 17, height = 24, file = "GUI EnderIO Crusher Arrow Empty.png" },
@@ -97,20 +100,17 @@ function p.SAGMill(f)
         padding = args.padding,
     })
 
-    local ball = args.ball1 or args.input2 or args.ball or args.slot6 or args[6]
     if ball then
-        gui:insertSlot({ x = 73, y = 11, value = ball })
-            :insertImage({
-                x = 94,
-                y = 12,
-                width = 4,
-                height = 16,
-                file = "GUI EnderIO Crusher Ball Gauge Full.png",
-                reverse = true,
-                progress =
-                "up",
-                duration = 10
-            })
+        gui:insertImage({
+            x = 94,
+            y = 12,
+            width = 4,
+            height = 16,
+            file = "GUI EnderIO Crusher Ball Gauge Full.png",
+            reverse = true,
+            progress = "up",
+            duration = 10
+        })
     end
 
     return tostring(gui)
