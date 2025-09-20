@@ -30,6 +30,16 @@ local function nonNilValues(default, ...)
     return default
 end
 
+local function getCurrentFrame(max_animation, length, frame_no)
+    -- スロットの数が異なる場合でも、最大値のアニメーション数の割合でフレーム番号を算出
+    -- 対象フレーム番号 = 対象スロットの最大アニメーション * (現在のフレーム番号 ÷ 最大値のアニメーション数)
+    local idx = math.floor(length * ((frame_no - 1) / max_animation)) + 1
+    if max_animation % length == 0 then
+        idx = ((frame_no - 1) % length) + 1
+    end
+    return idx
+end
+
 
 local t = {
     ------ generate sprite
@@ -436,44 +446,13 @@ local t = {
 
         return outer
     end,
-}
 
--------------------------
--- create
-function GUI_METATABLE.create(gui_object)
-    gui_object = gui_object or {}
-    local frame = mw.getCurrentFrame()
+    setImages = function(frame, elm, gui_object)
+        local scale = gui_object.scale
 
-    -------------------------
-    -- outer
-    local outer = t.createOuter(gui_object)
-
-    --------------------------------------
-    -- sheet
-    local gui = outer:tag("span"):addClass('mjwgui-sheet')
-
-    -- styles
-    local boxWidth = tonumber(gui_object.width) or 50
-    local boxHeight = tonumber(gui_object.height) or 50
-    local scale = tonumber(gui_object.scale) or 2
-    if boxWidth > 0 and boxHeight > 0 then
-        gui
-            :css("width", tostring(boxWidth * scale) .. "px")
-            :css("height", tostring(boxHeight * scale) .. "px")
-    end
-
-    -- items
-    local slots = gui_object.slots or {}
-    local texts = gui_object.text or {}
-    local gauges = gui_object.gauges or {}
-    local tanks = gui_object.tanks or {}
-
-    --------------------------------------
-    -- images
-    if type(gui_object.images) == "table" then
         for _, image in ipairs(gui_object.images) do
-            if image then
-                local imageSpan = gui:tag("span"):addClass("mjwgui-image")
+            if type(image) == "table" then
+                local imageSpan = elm:tag("span"):addClass("mjwgui-image")
 
                 -- position
                 if type(image.x) == "number" then
@@ -551,36 +530,349 @@ function GUI_METATABLE.create(gui_object)
                 end
             end
         end
-    end
+    end,
 
+    setShapeless = function(frame, elm, gui_object)
+        if gui_object.shapeless and gui_object.shapeless.isShapeless then
+            local shapelessX = nonNilValues(0, gui_object.shapeless.x)
+            local shapelessY = nonNilValues(0, gui_object.shapeless.y)
+            local shapelessText = gui_object.shapeless.text or "配置不問"
+            local shapelessFile = gui_object.shapeless.file or "Grid layout Shapeless icon.png"
+
+            elm:tag("span")
+                :addClass("mjwgui-shapeless")
+                :attr("title", shapelessText)
+                :css("padding", "0")
+                :css("left", tostring(shapelessX * gui_object.scale) .. "px")
+                :css("top", tostring(shapelessY * gui_object.scale) .. "px")
+                :css("cursor", "help")
+                :wikitext(frame:preprocess('[[File:' .. shapelessFile .. '|link=|' .. shapelessText .. ']]'))
+        end
+    end,
+
+    setSlots = function(self, elm, gui_object, slotlist)
+        local slots = gui_object.slots
+        local scale = gui_object.scale
+        local max_animation = gui_object.max_animation
+
+        for i = 1, #slots, 1 do
+            if #slotlist[i] <= 1 then
+                local slotAmount = tonumber(slots[i].amount)
+
+                if slotlist[i][1] and slotlist[i][1][1] ~= "" then
+                    if slotAmount ~= nil then
+                        slotlist[i][1][2] = slotAmount
+                    end
+                    local amount = slotlist[i][1][2] or 1
+
+                    local sub = self.generateSlot(slotlist[i][1][1], {
+                        background      = slots[i].background,
+                        large           = slots[i].large,
+                        placeholder     = slots[i].placeholder,
+                        showPlaceholder = slots[i].showPlaceholder,
+                        showStacksize   = slots[i].showStacksize,
+                        x               = slots[i].x,
+                        y               = slots[i].y,
+                        css             = slots[i].css,
+                        scale           = scale,
+                        amount          = amount,
+
+                    })
+                    elm:node(sub)
+                else
+                    if nonNilValues(true, slots[i].background) then
+                        local sub = self.generateSlot(nil, {
+                            background      = slots[i].background,
+                            large           = slots[i].large,
+                            placeholder     = slots[i].placeholder,
+                            showPlaceholder = slots[i].showPlaceholder,
+                            showStacksize   = slots[i].showStacksize,
+                            x               = slots[i].x,
+                            y               = slots[i].y,
+                            css             = slots[i].css,
+                            scale           = scale,
+                            amount          = nil,
+                        })
+                        elm:node(sub)
+                    end
+                end
+            else
+                local anim_frames = {}
+                local length = #slotlist[i]
+
+                for frame_no = 1, max_animation, 1 do
+                    anim_frames[frame_no] = ""
+                    local idx = getCurrentFrame(max_animation, length, frame_no)
+
+                    local slot = slotlist[i][idx][1]
+                    if slot ~= "" then
+                        local slotAmount = tonumber(slots[i].amount)
+                        local amount = slotAmount or slotlist[i][idx][2] or 1
+                        local sub = self.generateSlot(slot, {
+                            background      = slots[i].background,
+                            large           = slots[i].large,
+                            placeholder     = slots[i].placeholder,
+                            showPlaceholder = slots[i].showPlaceholder,
+                            showStacksize   = slots[i].showStacksize,
+                            x               = slots[i].x,
+                            y               = slots[i].y,
+                            css             = slots[i].css,
+                            scale           = scale,
+                            amount          = amount,
+                        })
+
+                        anim_frames[frame_no] = tostring(sub)
+                    else
+                        if nonNilValues(true, slots[i].background) then
+                            local sub = self.generateSlot(nil, {
+                                background      = slots[i].background,
+                                large           = slots[i].large,
+                                placeholder     = slots[i].placeholder,
+                                showPlaceholder = slots[i].showPlaceholder,
+                                showStacksize   = slots[i].showStacksize,
+                                x               = slots[i].x,
+                                y               = slots[i].y,
+                                css             = slots[i].css,
+                                scale           = scale,
+                                amount          = nil,
+                            })
+                            anim_frames[frame_no] = tostring(sub)
+                        end
+                    end
+                end
+                elm:wikitext(animate.base(anim_frames))
+            end
+        end
+    end,
+
+    setTanks = function(self, elm, gui_object, tanklist)
+        local tanks = gui_object.tanks
+        local scale = gui_object.scale
+        local max_animation = gui_object.max_animation
+
+        for i = 1, #tanks, 1 do
+            if #tanklist[i] <= 1 then
+                local tankAmount = tonumber(tanks[i].amount)
+
+                if tanklist[i][1] and tanklist[i][1][1] ~= "" then
+                    if tankAmount ~= nil then
+                        tanklist[i][1][2] = tankAmount
+                    end
+                    local amount = tanklist[i][1][2] or 0
+
+                    local sub = self.generateTank(tanklist[i][1][1], {
+                        background = tanks[i].background,
+                        x          = tanks[i].x,
+                        y          = tanks[i].y,
+                        width      = tanks[i].width,
+                        height     = tanks[i].height,
+                        direction  = tanks[i].direction,
+                        max        = tanks[i].max,
+                        css        = tanks[i].css,
+                        scale      = scale,
+                        amount     = amount,
+                    })
+                    elm:node(sub)
+                else
+                    if nonNilValues(true, tanks[i].background) then
+                        local sub = self.generateTank(nil, {
+                            background = tanks[i].background,
+                            x          = tanks[i].x,
+                            y          = tanks[i].y,
+                            width      = tanks[i].width,
+                            height     = tanks[i].height,
+                            direction  = tanks[i].direction,
+                            max        = tanks[i].max,
+                            css        = tanks[i].css,
+                            scale      = scale,
+                            amount     = nil,
+                        })
+                        elm:node(sub)
+                    end
+                end
+            else
+                local anim_frames = {}
+                local length = #tanklist[i]
+
+                for frame_no = 1, max_animation, 1 do
+                    anim_frames[frame_no] = ""
+                    local idx = getCurrentFrame(max_animation, length, frame_no)
+
+                    local tank = tanklist[i][idx][1]
+                    if tank ~= "" then
+                        local tankAmount = tonumber(tanks[i].amount)
+                        local amount = tankAmount or tanklist[i][idx][2] or 1
+                        local sub = self.generateTank(tank, {
+                            background = tanks[i].background,
+                            x          = tanks[i].x,
+                            y          = tanks[i].y,
+                            width      = tanks[i].width,
+                            height     = tanks[i].height,
+                            direction  = tanks[i].direction,
+                            css        = tanks[i].css,
+                            scale      = scale,
+                            amount     = amount,
+                        })
+
+                        anim_frames[frame_no] = tostring(sub)
+                    else
+                        if nonNilValues(true, tanks[i].background) then
+                            local sub = self.generateTank(nil, {
+                                background = tanks[i].background,
+                                x          = tanks[i].x,
+                                y          = tanks[i].y,
+                                width      = tanks[i].width,
+                                height     = tanks[i].height,
+                                direction  = tanks[i].direction,
+                                css        = tanks[i].css,
+                                scale      = scale,
+                                amount     = nil,
+                            })
+                            anim_frames[frame_no] = tostring(sub)
+                        end
+                    end
+                end
+                self:wikitext(animate.base(anim_frames))
+            end
+        end
+    end,
+
+    setText = function(self, elm, gui_object, textlist)
+        local texts = gui_object.text
+        local scale = gui_object.scale
+        local max_animation = gui_object.max_animation
+
+        for i = 1, #textlist, 1 do
+            if #textlist[i] == 1 then
+                local sub = self.generateText(textlist[i][1], {
+                    bold       = texts[i].bold,
+                    color      = texts[i].color,
+                    height     = texts[i].height,
+                    obfuscated = texts[i].obfuscated,
+                    size       = texts[i].size,
+                    strike     = texts[i].strike,
+                    underline  = texts[i].underline,
+                    prefix     = texts[i].prefix,
+                    suffix     = texts[i].suffix,
+                    x          = texts[i].x,
+                    y          = texts[i].y,
+                    css        = texts[i].css,
+                    scale      = scale,
+                })
+                elm:node(sub)
+            else
+                local anim_frames = {}
+                local length = #textlist[i]
+
+                for frame_no = 1, max_animation, 1 do
+                    local idx = getCurrentFrame(max_animation, length, frame_no)
+
+                    local sub = self.generateText(textlist[i][idx], {
+                        bold       = texts[i].bold,
+                        color      = texts[i].color,
+                        height     = texts[i].height,
+                        obfuscated = texts[i].obfuscated,
+                        size       = texts[i].size,
+                        strike     = texts[i].strike,
+                        underline  = texts[i].underline,
+                        prefix     = texts[i].prefix,
+                        suffix     = texts[i].suffix,
+                        x          = texts[i].x,
+                        y          = texts[i].y,
+                        css        = texts[i].css,
+                        scale      = scale,
+                    })
+                    anim_frames[frame_no] = tostring(sub)
+                end
+                elm:wikitext(animate.base(anim_frames))
+            end
+        end
+    end,
+
+    setGauge = function(self, elm, gui_object, gaugelist, gaugelimitlist)
+        local gauges = gui_object.gauges
+        local scale = gui_object.scale
+        local max_animation = gui_object.max_animation
+
+        for i = 1, #gauges, 1 do
+            if #gaugelist[i] <= 1 then
+                local sub = self.generateGauge(gaugelist[i][1], gaugelimitlist[i][1], {
+                    direction = gauges[i].direction,
+                    height    = gauges[i].height,
+                    width     = gauges[i].width,
+                    x         = gauges[i].x,
+                    y         = gauges[i].y,
+                    scale     = scale,
+                    file      = gauges[i].file,
+                    css       = gauges[i].css,
+                })
+                elm:node(sub)
+            else
+                local anim_frames = {}
+                local length = #gaugelist[i]
+                local length_limit = #gaugelimitlist[i]
+
+                for frame_no = 1, max_animation, 1 do
+                    local idx = getCurrentFrame(max_animation, length, frame_no)
+                    local idx_limit = getCurrentFrame(length_limit, frame_no)
+
+                    local sub = self.generateGauge(gaugelist[i][idx], gaugelimitlist[i][idx_limit], {
+                        direction = gauges[i].direction,
+                        height    = gauges[i].height,
+                        width     = gauges[i].width,
+                        x         = gauges[i].x,
+                        y         = gauges[i].y,
+                        file      = gauges[i].file,
+                        css       = gauges[i].css,
+                        scale     = scale,
+                    })
+                    anim_frames[frame_no] = tostring(sub)
+                end
+                elm:wikitext(animate.base(anim_frames))
+            end
+        end
+    end,
+}
+
+-------------------------
+-- create
+function GUI_METATABLE.create(gui_object)
+    gui_object = gui_object or {}
+    local frame = mw.getCurrentFrame()
+
+    -------------------------
+    -- element
+    local outer = t.createOuter(gui_object)
+    local gui = outer:tag("span"):addClass('mjwgui-sheet')
+
+    -- styles
+    local scale, boxWidth, boxHeight = gui_object.scale, gui_object.width, gui_object.height
+    if boxWidth > 0 and boxHeight > 0 then
+        gui
+            :css("width", tostring(boxWidth * scale) .. "px")
+            :css("height", tostring(boxHeight * scale) .. "px")
+    end
     --------------------------------------
-    -- shapeless icon
-    if gui_object.shapeless and gui_object.shapeless.isShapeless then
-        local shapelessX = nonNilValues(0, gui_object.shapeless.x)
-        local shapelessY = nonNilValues(0, gui_object.shapeless.y)
-        local shapelessText = gui_object.shapeless.text or "配置不問"
-        local shapelessFile = gui_object.shapeless.file or "Grid layout Shapeless icon.png"
+    -- images
+    t.setImages(frame, gui, gui_object)
 
-        gui:tag("span")
-            :addClass("mjwgui-shapeless")
-            :attr("title", shapelessText)
-            :css("padding", "0")
-            :css("left", tostring(shapelessX * scale) .. "px")
-            :css("top", tostring(shapelessY * scale) .. "px")
-            :css("cursor", "help")
-            :wikitext(frame:preprocess('[[File:' .. shapelessFile .. '|link=|' .. shapelessText .. ']]'))
-    end
+    -- shapeless icon
+    t.setShapeless(frame, gui, gui_object)
 
     --------------------------------------
     -- count animation frames
     local max_animation = 1
+
+    local slots = gui_object.slots
+    local texts = gui_object.text
+    local gauges = gui_object.gauges
+    local tanks = gui_object.tanks
 
     local slotlist = {}
     local textlist = {}
     local gaugelist = {}
     local gaugelimitlist = {}
     local tanklist = {}
-    local tanklimitlist = {}
 
     -- slot
     for i = 1, #slots, 1 do
@@ -700,280 +992,13 @@ function GUI_METATABLE.create(gui_object)
             end
         end
     end
+    gui_object.max_animation = max_animation
 
     --------------------------------------
-    local function getCurrentFrame(length, frame_no)
-        -- スロットの数が異なる場合でも、最大値のアニメーション数の割合でフレーム番号を算出
-        -- 対象フレーム番号 = 対象スロットの最大アニメーション * (現在のフレーム番号 ÷ 最大値のアニメーション数)
-        local idx = math.floor(length * ((frame_no - 1) / max_animation)) + 1
-        if max_animation % length == 0 then
-            idx = ((frame_no - 1) % length) + 1
-        end
-        return idx
-    end
-
-    -- slots
-    for i = 1, #slots, 1 do
-        if #slotlist[i] <= 1 then
-            local slotAmount = tonumber(slots[i].amount)
-
-            if slotlist[i][1] and slotlist[i][1][1] ~= "" then
-                if slotAmount ~= nil then
-                    slotlist[i][1][2] = slotAmount
-                end
-                local amount = slotlist[i][1][2] or 1
-
-                local sub = t.generateSlot(slotlist[i][1][1], {
-                    background      = slots[i].background,
-                    large           = slots[i].large,
-                    placeholder     = slots[i].placeholder,
-                    showPlaceholder = slots[i].showPlaceholder,
-                    showStacksize   = slots[i].showStacksize,
-                    x               = slots[i].x,
-                    y               = slots[i].y,
-                    css             = slots[i].css,
-                    scale           = scale,
-                    amount          = amount,
-
-                })
-                gui:node(sub)
-            else
-                if nonNilValues(true, slots[i].background) then
-                    local sub = t.generateSlot(nil, {
-                        background      = slots[i].background,
-                        large           = slots[i].large,
-                        placeholder     = slots[i].placeholder,
-                        showPlaceholder = slots[i].showPlaceholder,
-                        showStacksize   = slots[i].showStacksize,
-                        x               = slots[i].x,
-                        y               = slots[i].y,
-                        css             = slots[i].css,
-                        scale           = scale,
-                        amount          = nil,
-                    })
-                    gui:node(sub)
-                end
-            end
-        else
-            local anim_frames = {}
-            local length = #slotlist[i]
-
-            for frame_no = 1, max_animation, 1 do
-                anim_frames[frame_no] = ""
-                local idx = getCurrentFrame(length, frame_no)
-
-                local slot = slotlist[i][idx][1]
-                if slot ~= "" then
-                    local slotAmount = tonumber(slots[i].amount)
-                    local amount = slotAmount or slotlist[i][idx][2] or 1
-                    local sub = t.generateSlot(slot, {
-                        background      = slots[i].background,
-                        large           = slots[i].large,
-                        placeholder     = slots[i].placeholder,
-                        showPlaceholder = slots[i].showPlaceholder,
-                        showStacksize   = slots[i].showStacksize,
-                        x               = slots[i].x,
-                        y               = slots[i].y,
-                        css             = slots[i].css,
-                        scale           = scale,
-                        amount          = amount,
-                    })
-
-                    anim_frames[frame_no] = tostring(sub)
-                else
-                    if nonNilValues(true, slots[i].background) then
-                        local sub = t.generateSlot(nil, {
-                            background      = slots[i].background,
-                            large           = slots[i].large,
-                            placeholder     = slots[i].placeholder,
-                            showPlaceholder = slots[i].showPlaceholder,
-                            showStacksize   = slots[i].showStacksize,
-                            x               = slots[i].x,
-                            y               = slots[i].y,
-                            css             = slots[i].css,
-                            scale           = scale,
-                            amount          = nil,
-                        })
-                        anim_frames[frame_no] = tostring(sub)
-                    end
-                end
-            end
-            gui:wikitext(animate.base(anim_frames))
-        end
-    end
-
-    -- tank
-    for i = 1, #tanks, 1 do
-        if #tanklist[i] <= 1 then
-            local tankAmount = tonumber(tanks[i].amount)
-
-            if tanklist[i][1] and tanklist[i][1][1] ~= "" then
-                if tankAmount ~= nil then
-                    tanklist[i][1][2] = tankAmount
-                end
-                local amount = tanklist[i][1][2] or 0
-
-                local sub = t.generateTank(tanklist[i][1][1], {
-                    background = tanks[i].background,
-                    x          = tanks[i].x,
-                    y          = tanks[i].y,
-                    width      = tanks[i].width,
-                    height     = tanks[i].height,
-                    direction  = tanks[i].direction,
-                    max        = tanks[i].max,
-                    css        = tanks[i].css,
-                    scale      = scale,
-                    amount     = amount,
-                })
-                gui:node(sub)
-            else
-                if nonNilValues(true, tanks[i].background) then
-                    local sub = t.generateTank(nil, {
-                        background = tanks[i].background,
-                        x          = tanks[i].x,
-                        y          = tanks[i].y,
-                        width      = tanks[i].width,
-                        height     = tanks[i].height,
-                        direction  = tanks[i].direction,
-                        max        = tanks[i].max,
-                        css        = tanks[i].css,
-                        scale      = scale,
-                        amount     = nil,
-                    })
-                    gui:node(sub)
-                end
-            end
-        else
-            local anim_frames = {}
-            local length = #tanklist[i]
-
-            for frame_no = 1, max_animation, 1 do
-                anim_frames[frame_no] = ""
-                local idx = getCurrentFrame(length, frame_no)
-
-                local tank = tanklist[i][idx][1]
-                if tank ~= "" then
-                    local tankAmount = tonumber(tanks[i].amount)
-                    local amount = tankAmount or tanklist[i][idx][2] or 1
-                    local sub = t.generateTank(tank, {
-                        background = tanks[i].background,
-                        x          = tanks[i].x,
-                        y          = tanks[i].y,
-                        width      = tanks[i].width,
-                        height     = tanks[i].height,
-                        direction  = tanks[i].direction,
-                        css        = tanks[i].css,
-                        scale      = scale,
-                        amount     = amount,
-                    })
-
-                    anim_frames[frame_no] = tostring(sub)
-                else
-                    if nonNilValues(true, tanks[i].background) then
-                        local sub = t.generateTank(nil, {
-                            background = tanks[i].background,
-                            x          = tanks[i].x,
-                            y          = tanks[i].y,
-                            width      = tanks[i].width,
-                            height     = tanks[i].height,
-                            direction  = tanks[i].direction,
-                            css        = tanks[i].css,
-                            scale      = scale,
-                            amount     = nil,
-                        })
-                        anim_frames[frame_no] = tostring(sub)
-                    end
-                end
-            end
-            gui:wikitext(animate.base(anim_frames))
-        end
-    end
-
-    -- gauge
-    for i = 1, #gauges, 1 do
-        if #gaugelist[i] <= 1 then
-            local sub = t.generateGauge(gaugelist[i][1], gaugelimitlist[i][1], {
-                direction = gauges[i].direction,
-                height    = gauges[i].height,
-                width     = gauges[i].width,
-                x         = gauges[i].x,
-                y         = gauges[i].y,
-                scale     = scale,
-                file      = gauges[i].file,
-                css       = gauges[i].css,
-            })
-            gui:node(sub)
-        else
-            local anim_frames = {}
-            local length = #gaugelist[i]
-            local length_limit = #gaugelimitlist[i]
-
-            for frame_no = 1, max_animation, 1 do
-                local idx = getCurrentFrame(length, frame_no)
-                local idx_limit = getCurrentFrame(length_limit, frame_no)
-
-                local sub = t.generateGauge(gaugelist[i][idx], gaugelimitlist[i][idx_limit], {
-                    direction = gauges[i].direction,
-                    height    = gauges[i].height,
-                    width     = gauges[i].width,
-                    x         = gauges[i].x,
-                    y         = gauges[i].y,
-                    file      = gauges[i].file,
-                    css       = gauges[i].css,
-                    scale     = scale,
-                })
-                anim_frames[frame_no] = tostring(sub)
-            end
-            gui:wikitext(animate.base(anim_frames))
-        end
-    end
-
-    -- text ---
-    for i = 1, #textlist, 1 do
-        if #textlist[i] == 1 then
-            local sub = t.generateText(textlist[i][1], {
-                bold       = texts[i].bold,
-                color      = texts[i].color,
-                height     = texts[i].height,
-                obfuscated = texts[i].obfuscated,
-                size       = texts[i].size,
-                strike     = texts[i].strike,
-                underline  = texts[i].underline,
-                prefix     = texts[i].prefix,
-                suffix     = texts[i].suffix,
-                x          = texts[i].x,
-                y          = texts[i].y,
-                css        = texts[i].css,
-                scale      = scale,
-            })
-            gui:node(sub)
-        else
-            local anim_frames = {}
-            local length = #textlist[i]
-
-            for frame_no = 1, max_animation, 1 do
-                local idx = getCurrentFrame(length, frame_no)
-
-                local sub = t.generateText(textlist[i][idx], {
-                    bold       = texts[i].bold,
-                    color      = texts[i].color,
-                    height     = texts[i].height,
-                    obfuscated = texts[i].obfuscated,
-                    size       = texts[i].size,
-                    strike     = texts[i].strike,
-                    underline  = texts[i].underline,
-                    prefix     = texts[i].prefix,
-                    suffix     = texts[i].suffix,
-                    x          = texts[i].x,
-                    y          = texts[i].y,
-                    css        = texts[i].css,
-                    scale      = scale,
-                })
-                anim_frames[frame_no] = tostring(sub)
-            end
-            gui:wikitext(animate.base(anim_frames))
-        end
-    end
+    t.setSlots(t, gui, gui_object, slotlist)
+    t.setTanks(t, gui, gui_object, tanklist)
+    t.setGauge(t, gui, gui_object, gaugelist, gaugelimitlist)
+    t.setText(t, gui, gui_object, textlist)
 
     return outer
 end
@@ -1126,6 +1151,9 @@ function p.new(settings)
     if not settings.tanks then settings.tanks = {} end
     if not settings.gauges then settings.gauges = {} end
     if not settings.text then settings.text = {} end
+    settings.width = tonumber(settings.width) or 50
+    settings.height = tonumber(settings.height) or 50
+    settings.scale = tonumber(settings.scale) or 2
 
     return setmetatable(settings, {
         __index = GUI_METATABLE,
