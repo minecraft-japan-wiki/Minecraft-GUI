@@ -434,6 +434,9 @@ function GUI_METATABLE.create(gui_object)
     if not gui_object.border then
         outer:css("border", 'none')
     end
+    if not gui_object.background then
+        outer:css("background", "transparent")
+    end
 
     --------------------------------------
     -- sheet
