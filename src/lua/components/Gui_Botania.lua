@@ -220,7 +220,7 @@ function p.RunicAltar(f)
         local r = 360 / inputValueLength
         for i = 1, inputValueLength do
             local theta = math.rad(-r * (i - 1) - 90)
-            gui:insert({
+            gui:insertSlot({
                 x = math.floor(42 + (32 * math.cos(theta)) - 9),
                 y = math.floor(57 - (32 * math.sin(theta)) - 9),
                 value = inputValues[i],
