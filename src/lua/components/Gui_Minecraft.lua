@@ -692,7 +692,7 @@ function p.LabTable(f)
     gui:setWidth(18)
 
     for i = 1, slotLength do
-        gui.insertSlot({ x = (i - 1) * 18, y = 0, amount = 1 })
+        gui:insertSlot({ x = (i - 1) * 18, y = 0, amount = 1 })
     end
 
     if valueLength > 0 then
