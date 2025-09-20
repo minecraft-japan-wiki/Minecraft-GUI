@@ -428,14 +428,16 @@ function GUI_METATABLE.create(gui_object)
     end
 
     -- styles
-    if gui_object.padding ~= nil and gui_object.padding then
+    if gui_object.padding ~= nil and not gui_object.padding then
         outer:css("padding", '0')
     end
     if not gui_object.border then
         outer:css("border", 'none')
     end
-    if not gui_object.background then
+    if gui_object.background ~= nil and not gui_object.background then
         outer:css("background", "transparent")
+    elseif type(gui_object.background) == "string" then
+        outer:css("background", gui_object.background)
     end
 
     --------------------------------------
