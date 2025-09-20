@@ -744,11 +744,13 @@ function p.Hotbar(f)
 
     local px = 0
     if side == "r" or side == "right" then
-        gui:insertImage({ x = 190, y = 1, width = 22, height = 22, file = "GUI Hotbar offhand right.png" })
+        gui:setWidth(212)
+            :insertImage({ x = 190, y = 1, width = 22, height = 22, file = "GUI Hotbar offhand right.png" })
             :insertSlot({ x = 192, y = 3, value = offhand, background = false })
     elseif offhand or side == "l" or side == "left" then
         px = 28
-        gui:insertImage({ x = 0, y = 1, width = 22, height = 22, file = "GUI Hotbar offhand left.png" })
+        gui:setWidth(212)
+            :insertImage({ x = 0, y = 1, width = 22, height = 22, file = "GUI Hotbar offhand left.png" })
             :insertSlot({ x = 2, y = 3, value = offhand, background = false })
     end
 
