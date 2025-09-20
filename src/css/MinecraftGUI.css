@@ -11,10 +11,11 @@
 .mjwgui {
     display: inline-block;
     padding: 4px;
-    background-color: #c6c6c6;
+    background: #c6c6c6;
     box-sizing: border-box;
     border: 2px solid;
     border-color: #DBDBDB #5B5B5B #5B5B5B #DBDBDB;
+    overflow: hidden;
 }
 
 .mjwgui .mjwgui-sheet {
