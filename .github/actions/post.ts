@@ -92,15 +92,19 @@ async function main() {
         { target: "src/lua/components/Gui_Industrial Revolution by Redstone.lua", dist: "Module:Gui/Industrial Revolution by Redstone" },
         { target: "src/lua/components/Gui_IndustrialCraft2.lua", dist: "Module:Gui/IndustrialCraft2" },
     ]
-    try {
-        if (!(MW_TARGET_PAGE && GITHUB_TARGET_DIR)) {
-            throw Error("no env values.")
+
+    for (let i = 0; i < data.length; i++) {
+        try {
+            if (!(data[i].target && data[i].dist)) {
+                throw Error("no env values.")
+            }
+            const content = await getContentFromRepos(data[i].target)
+            await editPage(data[i].dist, content)
+        } catch (e) {
+            console.warn(e)
         }
-        const content = await getContentFromRepos(GITHUB_TARGET_DIR)
-        await editPage(MW_TARGET_PAGE, content)
-    } catch (e) {
-        console.warn(e)
     }
+
 }
 
 main().catch((e) => {
