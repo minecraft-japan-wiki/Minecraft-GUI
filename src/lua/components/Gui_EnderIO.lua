@@ -316,8 +316,8 @@ function p.FluidTank(f)
         slots = {
             { x = 0,  y = 0,  value = args.input1 or args.input or args.slot1 or args[1] },
             { x = 0,  y = 31, value = args.output1 or args.target1 or args.output or args.target or args.slot2 or args[2] },
-            { x = 72, y = 0,  value = args.input2 or args.slot3 or args[3] },
-            { x = 72, y = 31, value = args.output2 or args.target2 or args.slot4 or args[4] },
+            { x = 72, y = 0,  value = args.input2 or args.slot4 or args[4] },
+            { x = 72, y = 31, value = args.output2 or args.target2 or args.slot5 or args[5] },
         },
         tanks = {
             {
@@ -325,7 +325,7 @@ function p.FluidTank(f)
                 y = 0,
                 width = 18,
                 height = 49,
-                value = args.output3 or args.target3 or args.input3 or args.tank1 or args.tank or args.slot5 or args[5],
+                value = args.tank1 or args.tank or args.slot3 or args[3],
                 max = 16000
             }
         },
