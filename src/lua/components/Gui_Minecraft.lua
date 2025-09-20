@@ -769,7 +769,7 @@ function p.Hotbar(f)
     local selected = tonumber(args.selected) or tonumber(args.select)
     if selected and selected >= 1 and selected <= 9 then
         selected = math.floor(selected)
-        gui:insertImage({ x = (selected - 1) * 20, y = 0, width = 24, height = 24, file = "GUI Hotbar selected.png", css = { ["z-index"] = 2 } })
+        gui:insertImage({ x = (selected - 1) * 20 + px, y = 0, width = 24, height = 24, file = "GUI Hotbar selected.png", css = { ["z-index"] = 2 } })
     end
 
     return tostring(gui)
