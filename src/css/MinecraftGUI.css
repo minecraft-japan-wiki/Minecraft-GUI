@@ -1,0 +1,346 @@
+/*
+ * Minecraft GUI (MediaWiki Gadget)
+ * https://github.com/minecraft-japan-wiki/Minecraft-GUI
+ * https://minecraftjapan.miraheze.org/wiki/MediaWiki:Gadget-MinecraftGUI.css
+ * 
+ * Licensed under
+ * Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)
+ * https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en
+ */
+
+.mjwgui {
+    display: inline-block;
+    padding: 4px;
+    background-color: #c6c6c6;
+    box-sizing: border-box;
+    border: 2px solid;
+    border-color: #DBDBDB #5B5B5B #5B5B5B #DBDBDB;
+}
+
+.mjwgui .mjwgui-sheet {
+    position: relative;
+    display: inline-block;
+    vertical-align: middle;
+    background-repeat: no-repeat;
+}
+
+
+/* slot */
+.mjwgui .mjwgui-slot,
+.mjwgui .mjwgui-slot.mjwgui-slot--large .mjwgui-slot--inner {
+    position: absolute;
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    text-align: left;
+    vertical-align: baseline;
+    padding: 0;
+    box-sizing: content-box;
+}
+
+.mjwgui .mjwgui-slot {
+    left: 0;
+    top: 0;
+    border: 2px solid transparent;
+}
+
+.mjwgui .mjwgui-slot:not(.mjwgui-slot--nobg) {
+    background: #8B8B8B no-repeat center center / 32px 32px;
+    border-color: #373737 #FFF #FFF #373737;
+}
+
+.mjwgui .mjwgui-slot:not(.mjwgui-slot--nobg):not(.mjwgui-slot--large):hover:after,
+.mjwgui .mjwgui-slot.mjwgui-slot--large:not(.mjwgui-slot--nobg) .mjwgui-slot--inner:hover:after {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 32px;
+    height: 32px;
+    pointer-events: none;
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.mjwgui .mjwgui-slot.mjwgui-slot--large {
+    padding: 8px;
+}
+
+.mjwgui .mjwgui-slot.mjwgui-slot--large.mjwgui-slot--nobg {
+    padding: 10px;
+}
+
+.mjwgui .mjwgui-slot.mjwgui-slot--large .mjwgui-slot--inner {
+    top: 8px;
+    left: 8px;
+}
+
+.mjwgui .mjwgui-slot.mjwgui-slot--large.mjwgui-slot--nobg .mjwgui-slot--inner {
+    top: 10px;
+    left: 10px;
+}
+
+/* tank */
+.mjwgui .mjwgui-tank {
+    position: absolute;
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    text-align: left;
+    vertical-align: baseline;
+    padding: 0;
+    left: 0;
+    top: 0;
+    box-sizing: border-box;
+    border: 2px solid transparent;
+    overflow: hidden;
+}
+
+.mjwgui .mjwgui-tank:not(.mjwgui-tank--nobg) {
+    background: #8B8B8B no-repeat center center / 32px 32px;
+    border-color: #373737 #FFF #FFF #373737;
+}
+
+.mjwgui .mjwgui-tank:not(.mjwgui-tank--nobg):hover:after {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.3);
+    pointer-events: none;
+}
+
+.mjwgui .mjwgui-tank .mjwgui-tank-inner {
+    display: inline-block;
+    position: absolute;
+    overflow: hidden;
+    vertical-align: bottom;
+    max-width: 100%;
+    max-height: 100%;
+    width: 100%;
+    height: 100%;
+    vertical-align: bottom;
+    text-align: center;
+}
+
+.mjwgui .mjwgui-tank a.mjwgui-tank-item-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+}
+
+.mjwgui .mjwgui-tank .mjwgui-tank-inner.mjwgui-tank--right,
+.mjwgui .mjwgui-tank .mjwgui-tank-inner.mjwgui-tank--down {
+    top: 0;
+    left: 0;
+}
+
+.mjwgui .mjwgui-tank .mjwgui-tank-inner.mjwgui-tank--up {
+    bottom: 0;
+    left: 0;
+}
+
+.mjwgui .mjwgui-tank .mjwgui-tank-inner.mjwgui-tank--left {
+    bottom: 0;
+    right: 0;
+}
+
+.mjwgui .mjwgui-tank .mjwgui-tank-item {
+    display: none;
+}
+
+/* slot ui */
+.mjwgui .mjwgui-placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+}
+
+.mjwgui .mjwgui-slot-nfr {
+    padding: 0;
+    position: absolute;
+    display: inline-block;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+}
+
+.mjwgui .mjwgui-slot-stacksize {
+    font-family: Minecraft, sans-serif;
+    font-weight: normal;
+    color: var(--minecraft-color-white);
+    text-shadow: 0.12em 0.1em 0 var(--minecraft-background-color-white);
+    width: 12px;
+    height: 16px;
+    background-size: 132px auto;
+    margin-bottom: -8px;
+    margin-right: -2px;
+    pointer-events: none;
+    font-size: 18px;
+    line-height: 1;
+    text-align: left;
+
+}
+
+.mjwgui .mjwgui-slot-stacksize-num {
+    display: inline-block;
+    background-image: url(https://static.wikitide.net/minecraftjapanwiki/a/a1/GUI_Numbers.png);
+    width: 12px;
+    height: 16px;
+    background-size: 132px auto;
+    margin-bottom: -8px;
+    margin-right: -2px;
+    pointer-events: none;
+
+}
+
+.mjwgui .mjwgui-slot-stacksize.mjwgui-slot-stacksize--negative {
+    color: var(--minecraft-color-red);
+    text-shadow: 0.12em 0.1em 0 var(--minecraft-background-color-red);
+}
+
+/* image */
+.mjwgui .mjwgui-image,
+.mjwgui .mjwgui-shapeless {
+    padding: 0;
+    position: absolute;
+    display: inline-block;
+    text-align: left;
+    vertical-align: baseline;
+    left: 0;
+    top: 0;
+    box-sizing: border-box;
+    line-height: 0;
+}
+
+.mjwgui .mjwgui-image {
+    pointer-events: none;
+}
+
+/* text */
+.mjwgui .mjwgui-text {
+    position: absolute;
+    display: inline-block;
+    left: 0;
+    top: 0;
+    box-sizing: content-box;
+    font-size: 16px;
+}
+
+.mjwgui .mjwgui-text:not(.minecraft-text) {
+    font-family: var(--minecraft-fontfamily);
+    color: rgb(64, 64, 64);
+    font-weight: normal;
+    text-shadow: none;
+}
+
+/* gauge */
+.mjwgui .mjwgui-gauge {
+    padding: 0;
+    position: absolute;
+    display: inline-block;
+    text-align: left;
+    vertical-align: baseline;
+    left: 0;
+    top: 0;
+    box-sizing: border-box;
+    line-height: 0;
+}
+
+.mjwgui .mjwgui-gauge .mjwgui-gauge-item {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    overflow: hidden;
+}
+
+
+/* progress */
+.mjwgui-progress {
+    animation-duration: 3s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+}
+
+.mjwgui-progress--reverse {
+    animation-duration: 3s;
+    animation-iteration-count: infinite;
+    animation-timing-function: linear;
+    animation-direction: reverse;
+}
+
+@keyframes mjwgui-progress--up {
+    from {
+        -webkit-clip-path: inset(100% 0 0 0);
+        clip-path: inset(100% 0 0 0);
+    }
+
+    to {
+        clip: rect(0 auto auto auto);
+        -webkit-clip-path: inset(0 0 0 0);
+        clip-path: inset(0 0 0 0);
+    }
+}
+
+@keyframes mjwgui-progress--right {
+    from {
+        clip: rect(auto 0 auto auto);
+        -webkit-clip-path: inset(0 100% 0 0);
+        clip-path: inset(0 100% 0 0);
+    }
+
+    to {
+        -webkit-clip-path: inset(0 0 0 0);
+        clip-path: inset(0 0 0 0);
+    }
+}
+
+@keyframes mjwgui-progress--down {
+    from {
+        clip: rect(auto auto 0 auto);
+        -webkit-clip-path: inset(0 0 100% 0);
+        clip-path: inset(0 0 100% 0);
+    }
+
+    to {
+        -webkit-clip-path: inset(0 0 0 0);
+        clip-path: inset(0 0 0 0);
+    }
+}
+
+@keyframes mjwgui-progress--left {
+    from {
+        -webkit-clip-path: inset(0 0 0 100%);
+        clip-path: inset(0 0 0 100%);
+    }
+
+    to {
+        clip: rect(auto auto auto 0);
+        -webkit-clip-path: inset(0 0 0 0);
+        clip-path: inset(0 0 0 0);
+    }
+}
+
+/* pixelated */
+.mjwgui .mjwgui-image img,
+.mjwgui .mjwgui-shapeless img,
+.mjwgui .mjwgui-gauge img,
+.mjwgui .mjwgui-slot-stacksize,
+.mjwgui .mjwgui-slot-stacksize-num .mjwgui .mjwgui-sheet,
+.mjwgui .mjwgui-placeholder,
+.mjwgui .mjwgui-text {
+    image-rendering: optimizeSpeed;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: optimize-contrast;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -o-crisp-edges;
+    image-rendering: crisp-edges;
+    image-rendering: pixelated;
+    -ms-interpolation-mode: nearest-neighbor;
+}

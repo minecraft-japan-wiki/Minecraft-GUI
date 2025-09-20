@@ -77,6 +77,21 @@ async function editPage(page: string, content: string) {
 }
 
 async function main() {
+    const data = [
+        // css
+        { target: "src/css/MinecraftGUI.css", dist: "MediaWiki:Gadget-MinecraftGUI.css" },
+        // js
+        { target: "src/js/MinecraftGUI.js", dist: "MediaWiki:Gadget-MinecraftGUI.js" },
+        // lua
+        { target: "src/lua/Slot.lua", dist: "Module:Slot/utils" },
+        { target: "src/lua/Gui.lua", dist: "Module:Gui" },
+        // lua components
+        { target: "src/lua/components/Gui_Botania.lua", dist: "Module:Gui/Botania" },
+        { target: "src/lua/components/Gui_BuildCraft.lua", dist: "Module:Gui/BuildCraft" },
+        { target: "src/lua/components/Gui_EnderIO.lua", dist: "Module:Gui/EnderIO" },
+        { target: "src/lua/components/Gui_Industrial Revolution by Redstone.lua", dist: "Module:Gui/Industrial Revolution by Redstone" },
+        { target: "src/lua/components/Gui_IndustrialCraft2.lua", dist: "Module:Gui/IndustrialCraft2" },
+    ]
     try {
         if (!(MW_TARGET_PAGE && GITHUB_TARGET_DIR)) {
             throw Error("no env values.")
