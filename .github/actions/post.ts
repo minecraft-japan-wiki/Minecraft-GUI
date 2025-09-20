@@ -5,9 +5,6 @@ import * as github from "@actions/github"
 const MW_API = process.env.MW_API;
 const MW_CSRF_TOKEN = process.env.MW_CSRF_TOKEN;
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
-
-const MW_TARGET_PAGE = process.env.MW_TARGET_PAGE;
-const GITHUB_TARGET_DIR = process.env.GITHUB_TARGET_DIR;
 const MW_COOKIE = process.env.MW_COOKIE
 
 /**
@@ -86,6 +83,7 @@ async function main() {
         { target: "src/lua/Slot.lua", dist: "Module:Slot/utils" },
         { target: "src/lua/Gui.lua", dist: "Module:Gui" },
         // lua components
+        { target: "src/lua/components/Gui_Minecraft.lua", dist: "Module:Gui/Minecraft" },
         { target: "src/lua/components/Gui_Botania.lua", dist: "Module:Gui/Botania" },
         { target: "src/lua/components/Gui_BuildCraft.lua", dist: "Module:Gui/BuildCraft" },
         { target: "src/lua/components/Gui_EnderIO.lua", dist: "Module:Gui/EnderIO" },
