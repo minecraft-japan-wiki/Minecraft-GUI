@@ -425,6 +425,11 @@ local t = {
         elseif type(gui_object.class) == "table" then
             tableSettingClasses = gui_object.class
         end
+
+        -- border
+        if gui_object.border then
+            table.insert(tableSettingClasses, "mjwgui--border")
+        end
         for _, class in ipairs(tableSettingClasses) do
             if type(class) == "string" then
                 outer:addClass(class)
@@ -434,9 +439,6 @@ local t = {
         -- styles
         if gui_object.padding ~= nil and not gui_object.padding then
             outer:css("padding", '0')
-        end
-        if gui_object.border then
-            outer:addClass("mjwgui--border")
         end
         if gui_object.background ~= nil and not gui_object.background then
             outer:css("background", "transparent")
