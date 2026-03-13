@@ -3,7 +3,7 @@ local h = {}
 
 local jsprite = require('Module:JSprite')
 local aliases = require('Module:Slot/aliases')
-local l10n = require('Module:SpriteLink')
+local SpriteLink = require('Module:SpriteLink')
 
 local ENABLE_LOCALIZATION = true
 
@@ -45,10 +45,12 @@ local function getSprite(slot, args)
                     sprite.title = sprite.title .. "Sprite"
                 end
 
-                local id, l10n, link = l10n.getLinkAndTitle(sprite.title or "InvSprite", sprite.args[1])
+                local id, l10n, properties = SpriteLink.getLinkAndTitle(sprite.title or "InvSprite", sprite.args[1])
                 if id and l10n then
-                    sprite.args["title"] = sprite.args["title"] or l10n
-                    sprite.args["link"] = sprite.args["link"] or link
+                    sprite.args["title"] = sprite.args["title"] or properties.title or l10n
+                    sprite.args["description"] = sprite.args["description"] or properties.description
+                    sprite.args["rarity"] = sprite.args["rarity"] or properties.rarity
+                    sprite.args["link"] = sprite.args["link"] or properties.link
                 end
                 slot = tostring(frame:expandTemplate(sprite))
             else
@@ -56,10 +58,12 @@ local function getSprite(slot, args)
                 sprite.args.sheet = "InvSprite"
 
                 if ENABLE_LOCALIZATION then
-                    local id, l10n, link = l10n.getLinkAndTitle(sprite.title or "InvSprite", slot)
+                    local id, l10n, properties = SpriteLink.getLinkAndTitle(sprite.title or "InvSprite", slot)
                     if id and l10n then
-                        sprite.args["title"] = sprite.args["title"] or l10n
-                        sprite.args["link"] = sprite.args["link"] or link
+                        sprite.args["title"] = sprite.args["title"] or properties.title or l10n
+                        sprite.args["description"] = sprite.args["description"] or properties.description
+                        sprite.args["rarity"] = sprite.args["rarity"] or properties.rarity
+                        sprite.args["link"] = sprite.args["link"] or properties.link
                     end
                 end
 

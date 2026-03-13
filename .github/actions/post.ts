@@ -87,8 +87,9 @@ async function main() {
         { target: "src/lua/components/Gui_Botania.lua", dist: "Module:Gui/Botania" },
         { target: "src/lua/components/Gui_BuildCraft.lua", dist: "Module:Gui/BuildCraft" },
         { target: "src/lua/components/Gui_EnderIO.lua", dist: "Module:Gui/EnderIO" },
-        { target: "src/lua/components/Gui_Industrial Revolution by Redstone.lua", dist: "Module:Gui/Industrial Revolution by Redstone" },
         { target: "src/lua/components/Gui_IndustrialCraft2.lua", dist: "Module:Gui/IndustrialCraft2" },
+        { target: "src/lua/components/Gui_Industrial Revolution by Redstone.lua", dist: "Module:Gui/Industrial Revolution by Redstone" },
+        { target: "src/lua/components/Gui_RedPower2.lua", dist: "Module:Gui/RedPower2" },
     ]
 
     for (let i = 0; i < data.length; i++) {

@@ -507,8 +507,8 @@ function p.Trading(f)
         images = {
             { file = "GUI Furnace Arrow.png", x = 51, y = 5, width = 22, height = 16 },
         },
-        border = false,
-        padding = false,
+        border = args.border,
+        padding = args.padding,
     })
 
     return tostring(gui)
@@ -744,11 +744,13 @@ function p.Hotbar(f)
 
     local px = 0
     if side == "r" or side == "right" then
-        gui:insertImage({ x = 190, y = 1, width = 22, height = 22, file = "GUI Hotbar offhand right.png" })
+        gui:setWidth(212)
+            :insertImage({ x = 190, y = 1, width = 22, height = 22, file = "GUI Hotbar offhand right.png" })
             :insertSlot({ x = 192, y = 3, value = offhand, background = false })
     elseif offhand or side == "l" or side == "left" then
         px = 28
-        gui:insertImage({ x = 0, y = 1, width = 22, height = 22, file = "GUI Hotbar offhand left.png" })
+        gui:setWidth(212)
+            :insertImage({ x = 0, y = 1, width = 22, height = 22, file = "GUI Hotbar offhand left.png" })
             :insertSlot({ x = 2, y = 3, value = offhand, background = false })
     end
 
@@ -767,7 +769,7 @@ function p.Hotbar(f)
     local selected = tonumber(args.selected) or tonumber(args.select)
     if selected and selected >= 1 and selected <= 9 then
         selected = math.floor(selected)
-        gui:insertImage({ x = (selected - 1) * 20, y = 0, width = 24, height = 24, file = "GUI Hotbar selected.png", css = { ["z-index"] = 2 } })
+        gui:insertImage({ x = (selected - 1) * 20 + px, y = 0, width = 24, height = 24, file = "GUI Hotbar selected.png", css = { ["z-index"] = 2 } })
     end
 
     return tostring(gui)
