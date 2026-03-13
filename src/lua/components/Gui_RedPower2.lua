@@ -28,9 +28,9 @@ function p.AlloyFurnace(f)
             { x = 0, y = 25, value = args.fuel1 or args.fuel or args.input10 or args.slot11 or args[11] },
         },
         images = {
-            { file = "GUI Furnace Fire.png",           x = 3,  y = 10, width = 15, height = 15 },
+            { file = "GUI Furnace Fire.png",           x = 1,  y = 9, width = 15, height = 15 },
             { file = "GUI Furnace Arrow.png",          x = 92, y = 19, width = 22, height = 16 },
-            { file = "GUI Furnace Progress Fire.png",  x = 3,  y = 10, width = 15, height = 15, reverse = true },
+            { file = "GUI Furnace Progress Fire.png",  x = 1,  y = 9, width = 15, height = 15, reverse = true },
             { file = "GUI Furnace Progress Arrow.png", x = 92, y = 19, width = 22, height = 16, progress = "right" },
         },
         border = args.border,
