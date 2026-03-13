@@ -215,7 +215,7 @@ function p.CheeseMaker(f)
         width = 90,
         height = 48,
         slots = {
-            { x = 0,  y = 30, value = args.input2 or args.slot2 or args[2] },
+            { x = 0,  y = 30, value = args.input2 or args.slot3 or args[3] },
             { x = 64, y = 10, value = args.output1 or args.target1 or args.output or args.target or args.slot2 or args[2], large = true },
         },
         tanks = {
