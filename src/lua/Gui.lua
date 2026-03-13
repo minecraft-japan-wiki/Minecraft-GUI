@@ -31,8 +31,8 @@ local function nonNilValues(default, ...)
 end
 
 local function getCurrentFrame(max_animation, length, frame_no)
-    -- �X���b�g�̐����قȂ�ꍇ�ł��A�ő�l�̃A�j���[�V�������̊����Ńt���[���ԍ����Z�o
-    -- �Ώۃt���[���ԍ� = �ΏۃX���b�g�̍ő�A�j���[�V���� * (���݂̃t���[���ԍ� �� �ő�l�̃A�j���[�V������)
+    -- スロットの数が異なる場合でも、最大値のアニメーション数の割合でフレーム番号を算出
+    -- 対象フレーム番号 = 対象スロットの最大アニメーション * (現在のフレーム番号 ÷ 最大値のアニメーション数)
     local idx = math.floor(length * ((frame_no - 1) / max_animation)) + 1
     if max_animation % length == 0 then
         idx = ((frame_no - 1) % length) + 1
@@ -538,7 +538,7 @@ local t = {
         if gui_object.shapeless and gui_object.shapeless.isShapeless then
             local shapelessX = nonNilValues(0, gui_object.shapeless.x)
             local shapelessY = nonNilValues(0, gui_object.shapeless.y)
-            local shapelessText = gui_object.shapeless.text or "�z�u�s��"
+            local shapelessText = gui_object.shapeless.text or "配置不問"
             local shapelessFile = gui_object.shapeless.file or "Grid layout Shapeless icon.png"
 
             elm:tag("span")
