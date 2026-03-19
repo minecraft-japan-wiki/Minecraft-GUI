@@ -4,6 +4,7 @@ local IS_STACK_SIZE_TEXT = false
 
 local slotUtils = require("Module:Slot/utils")
 local animate = require('Module:AnimateFrame')
+local Yesno = require("Module:Yesno")
 
 
 local function split(inputstr, sep)
@@ -532,21 +533,83 @@ local t = {
         end
     end,
 
-    setShapeless = function(frame, elm, gui_object)
-        if gui_object.shapeless and gui_object.shapeless.isShapeless then
-            local shapelessX = nonNilValues(0, gui_object.shapeless.x)
-            local shapelessY = nonNilValues(0, gui_object.shapeless.y)
-            local shapelessText = gui_object.shapeless.text or "配置不問"
-            local shapelessFile = gui_object.shapeless.file or "Grid layout Shapeless icon.png"
+    generateShapeless = function(config)
+        local frame = mw.getCurrentFrame()
+        local sub = mw.html.create("span")
+            :addClass("mjwgui-shapeless")
 
-            elm:tag("span")
-                :addClass("mjwgui-shapeless")
-                :attr("title", shapelessText)
-                :css("padding", "0")
-                :css("left", tostring(shapelessX * gui_object.scale) .. "px")
-                :css("top", tostring(shapelessY * gui_object.scale) .. "px")
-                :css("cursor", "help")
-                :wikitext(frame:preprocess('[[File:' .. shapelessFile .. '|link=|' .. shapelessText .. ']]'))
+        local shapelessX = nonNilValues(0, config.x)
+        local shapelessY = nonNilValues(0, config.y)
+        local shapelessText = config.text or "配置不問"
+        local shapelessFile = config.file or "Grid layout Shapeless icon.png"
+
+        sub:attr("title", shapelessText)
+            :css("padding", "0")
+            :css("left", tostring(shapelessX * config.scale) .. "px")
+            :css("top", tostring(shapelessY * config.scale) .. "px")
+            :css("cursor", "help")
+            :wikitext(frame:preprocess('[[File:' .. shapelessFile .. '|link=|' .. shapelessText .. ']]'))
+        
+        return sub
+    end,
+
+    setShapeless = function(self, elm, gui_object)
+        if type(gui_object.shapeless)=="table" then
+            local isShapeless = { false }
+            local value = gui_object.shapeless.isShapeless
+            if type(value)=="string" and (gui_object.shapeless.animate == nil or gui_object.shapeless.animate) then
+                local items = split(value, ";")
+                for s, v in ipairs(items) do
+                    isShapeless[s] = Yesno(trim(v or '')) or false
+                end
+            else
+                isShapeless = { Yesno(value) }
+            end
+
+            local hasShapelessIcon = false
+            for i = 1, #isShapeless do
+                if isShapeless[i] then
+                    hasShapelessIcon = true
+                end
+            end
+            if not hasShapelessIcon then
+                return
+            end
+
+            if #isShapeless <= 1 then
+                if isShapeless[1] then
+                    local sub = self.generateShapeless({
+                        x = gui_object.shapeless.x,
+                        y = gui_object.shapeless.y,
+                        text = gui_object.shapeless.text,
+                        file = gui_object.shapeless.file,
+                        scale = gui_object.scale
+                    })
+                    elm:node(sub)
+                end
+            else
+                local anim_frames = {}
+                local max_animation = gui_object.max_animation
+                local length = #isShapeless
+                local existsShapelessIcon = false
+
+                for frame_no = 1, max_animation, 1 do
+                    anim_frames[frame_no] = ""
+                    local idx = getCurrentFrame(max_animation, length, frame_no)
+                    
+                    if isShapeless[idx] then
+                        local sub = self.generateShapeless({
+                            x = gui_object.shapeless.x,
+                            y = gui_object.shapeless.y,
+                            text = gui_object.shapeless.text,
+                            file = gui_object.shapeless.file,
+                            scale = gui_object.scale
+                        })
+                        anim_frames[frame_no] = tostring(sub)
+                    end
+                end
+                elm:wikitext(animate.base(anim_frames))
+            end
         end
     end,
 
@@ -856,9 +919,6 @@ function GUI_METATABLE.create(gui_object)
     -- images
     t.setImages(frame, gui, gui_object)
 
-    -- shapeless icon
-    t.setShapeless(frame, gui, gui_object)
-
     --------------------------------------
     -- count animation frames
     local max_animation = 1
@@ -995,6 +1055,7 @@ function GUI_METATABLE.create(gui_object)
     gui_object.max_animation = max_animation
 
     --------------------------------------
+    t.setShapeless(t, gui, gui_object)
     t.setSlots(t, gui, gui_object, slotlist)
     t.setTanks(t, gui, gui_object, tanklist)
     t.setGauge(t, gui, gui_object, gaugelist, gaugelimitlist)
