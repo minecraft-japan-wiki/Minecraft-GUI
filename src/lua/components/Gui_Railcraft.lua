@@ -154,6 +154,7 @@ function p.CokeOvenTank(f)
         },
         images = {
             { file = "GUI RC Coke Oven Tank Scale.png", x = 0,  y = 2,  width = 50, height = 49, css = { ["z-index"] = "2" } },
+            { file = "GUI RC Coke Oven Tank Arrow.png", x = 63, y = 20, width = 10, height = 13 },
             { file = "GUI RC Tank Slot.png",            x = 59, y = 0,  width = 18, height = 18 },
             { file = "GUI RC Tank Slot.png",            x = 59, y = 35, width = 18, height = 18 },
         },
