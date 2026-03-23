@@ -63,7 +63,7 @@ function p.BlastFurnace(f)
             { file = "GUI Furnace Fire.png",           x = 1,  y = 20, width = 15, height = 15 },
             { file = "GUI Furnace Arrow.png",          x = 25, y = 19, width = 22, height = 16 },
             { file = "GUI Furnace Progress Fire.png",  x = 1,  y = 20, width = 15, height = 15, reverse = true },
-            { file = "GUI Furnace Progress Arrow.png", x = 25, y = 19, width = 22, height = 16, progress = "right" },
+            { file = "GUI Furnace Progress Arrow.png", x = 25, y = 19, width = 22, height = 16, progress = "right", duration = 20 },
         },
         text = {
             {
@@ -104,7 +104,7 @@ function p.CokeOven(f)
             { file = "GUI Furnace Fire.png",            x = 1,  y = 3,  width = 15, height = 15 },
             { file = "GUI Furnace Arrow.png",           x = 19, y = 21, width = 22, height = 16 },
             { file = "GUI Furnace Progress Fire.png",   x = 1,  y = 3,  width = 15, height = 15, reverse = true },
-            { file = "GUI Furnace Progress Arrow.png",  x = 19, y = 21, width = 22, height = 16, progress = "right" },
+            { file = "GUI Furnace Progress Arrow.png",  x = 19, y = 21, width = 22, height = 16, progress = "right",         duration = 30 },
             { file = "GUI RC Coke Oven Tank Scale.png", x = 74, y = 0,  width = 50, height = 49, css = { ["z-index"] = "2" } },
         },
         tanks = {
