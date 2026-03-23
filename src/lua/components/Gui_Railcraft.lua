@@ -154,6 +154,7 @@ function p.CokeOvenTank(f)
         },
         images = {
             { file = "GUI RC Coke Oven Tank Scale.png", x = 0,  y = 2,  width = 50, height = 49, css = { ["z-index"] = "2" } },
+            { file = "GUI RC Coke Oven Tank Arrow.png", x = 63, y = 20, width = 10, height = 13 },
             { file = "GUI RC Tank Slot.png",            x = 59, y = 0,  width = 18, height = 18 },
             { file = "GUI RC Tank Slot.png",            x = 59, y = 35, width = 18, height = 18 },
         },
@@ -202,7 +203,7 @@ function p.RockCrusher(f)
             { x = 108, y = 0,  value = args.output2 or args.target2 or args.slot11 or args.E1 or args[11] },
             { x = 126, y = 0,  value = args.output3 or args.target3 or args.slot12 or args.F1 or args[12] },
             { x = 90,  y = 18, value = args.output4 or args.target4 or args.slot13 or args.D2 or args[13] },
-            { x = 198, y = 18, value = args.output5 or args.target5 or args.slot14 or args.E2 or args[14] },
+            { x = 108, y = 18, value = args.output5 or args.target5 or args.slot14 or args.E2 or args[14] },
             { x = 126, y = 18, value = args.output6 or args.target6 or args.slot15 or args.F2 or args[15] },
             { x = 90,  y = 36, value = args.output7 or args.target7 or args.slot16 or args.D3 or args[16] },
             { x = 108, y = 36, value = args.output8 or args.target8 or args.slot17 or args.E3 or args[17] },
