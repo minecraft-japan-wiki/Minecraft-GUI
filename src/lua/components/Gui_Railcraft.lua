@@ -105,17 +105,16 @@ function p.CokeOven(f)
             { file = "GUI Furnace Arrow.png",           x = 19, y = 21, width = 22, height = 16 },
             { file = "GUI Furnace Progress Fire.png",   x = 1,  y = 3,  width = 15, height = 15, reverse = true },
             { file = "GUI Furnace Progress Arrow.png",  x = 19, y = 21, width = 22, height = 16, progress = "right" },
-            { file = "GUI RC Coke Oven Tank Base.png",  x = 74, y = 0,  width = 50, height = 49 },
             { file = "GUI RC Coke Oven Tank Scale.png", x = 74, y = 0,  width = 50, height = 49, css = { ["z-index"] = "2" } },
         },
         tanks = {
             {
-                x = 75,
-                y = 1,
-                width = 48,
-                height = 47,
-                max = tonumber(args.max) or 10000,
-                value = args.output2 or args.target2 or args.tank1 or args.tank or args.slot3 or args[3],
+                x = 74,
+                y = 0,
+                width = 50,
+                height = 49,
+                max = 10000,
+                value = args.output2 or args.target2 or args.tank1 or args.tank or args.slot3 or args[3]
             },
         },
         text = {
@@ -154,18 +153,17 @@ function p.CokeOvenTank(f)
             { x = 59, y = 35, value = args.output1 or args.target1 or args.output or args.target or args.slot3 or args[3], background = false },
         },
         images = {
-            { file = "GUI RC Coke Oven Tank Base.png",  x = 0,  y = 2,  width = 50, height = 49 },
             { file = "GUI RC Coke Oven Tank Scale.png", x = 0,  y = 2,  width = 50, height = 49, css = { ["z-index"] = "2" } },
             { file = "GUI RC Tank Slot.png",            x = 59, y = 0,  width = 18, height = 18 },
             { file = "GUI RC Tank Slot.png",            x = 59, y = 35, width = 18, height = 18 },
         },
         tanks = {
             {
-                x = 1,
-                y = 3,
-                width = 48,
-                height = 47,
-                max = tonumber(args.max) or 10000,
+                x = 0,
+                y = 2,
+                width = 50,
+                height = 49,
+                max = 10000,
                 value = args.input1 or args.input or args.tank1 or args.tank or args.slot1 or args[1],
             },
         },
