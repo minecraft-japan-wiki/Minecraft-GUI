@@ -63,6 +63,32 @@ function p.BlastFurnace(f)
     return tostring(gui)
 end
 
+function p.MetalPress(f)
+    local args = f
+    if f == mw.getCurrentFrame() then
+        args = require('Module:ProcessArgs').merge(true)
+    else
+        f = mw.getCurrentFrame()
+    end
+
+    local gui = GuiUtils.new({
+        name = "ie-metal-press",
+        width = 100,
+        height = 46,
+        scale = 2,
+        slots = {
+            { x = 0,  y = 12, value = args.input1 or args.crop or args.input or args.slot1 or args[1] },
+            { x = 82, y = 12, value = args.output1 or args.target1 or args.output or args.target or args.slot2 or args[2] },
+            { x = 56, y = 0,  value = args.input2 or args.mold or args.slot3 or args[3] },
+        },
+        images = {
+            { x = 22, y = 5, width = 34, height = 41, file = "GUI IE Metal Press.png" }
+        },
+        border = args.border,
+        padding = args.padding,
+    })
+end
+
 function p.GardenCloche(f)
     local args = f
     if f == mw.getCurrentFrame() then
