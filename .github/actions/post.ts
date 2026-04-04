@@ -82,6 +82,7 @@ async function main() {
         // lua
         { target: "src/lua/Slot.lua", dist: "Module:Slot/utils" },
         { target: "src/lua/Gui.lua", dist: "Module:Gui" },
+        { target: "src/lua/SpriteLink.lua", dist: "Module:SpriteLink" },
         // lua components
         { target: "src/lua/components/Gui_Minecraft.lua", dist: "Module:Gui/Minecraft" },
         { target: "src/lua/components/Gui_Botania.lua", dist: "Module:Gui/Botania" },
