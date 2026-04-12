@@ -264,6 +264,18 @@
     overflow: hidden;
 }
 
+/* wikitext */
+.mjwgui .mjwgui-wikitext {
+    padding: 0;
+    position: absolute;
+    display: inline-block;
+    text-align: left;
+    vertical-align: baseline;
+    left: 0;
+    top: 0;
+    box-sizing: border-box;
+}
+
 
 /* progress */
 .mjwgui-progress {
