@@ -411,7 +411,7 @@ local t = {
     end,
 
     ------ generate wikitext
-    generateWikitext = function(wikitext, config)
+    generateWikitext = function(wikitext, config, frame)
         config = config or {}
         local sub = mw.html.create("span")
 
@@ -424,6 +424,18 @@ local t = {
         end
         if type(config.y) == "number" and config.y ~= 0 then
             sub:css("top", tostring(config.y * scale) .. "px")
+        end
+
+        -- size
+        if type(config.width) == "number" and config.width ~= 0 then
+            sub:css("width", tostring(config.width * scale) .. "px")
+        elseif type(config.width) == "string" then
+            sub:css("width", config.width)
+        end
+        if type(config.height) == "number" and config.height ~= 0 then
+            sub:css("height", tostring(config.height * scale) .. "px")
+        elseif type(config.height) == "string" then
+            sub:css("height", config.height)
         end
 
         -- css
@@ -442,7 +454,14 @@ local t = {
         end
 
         -- show content
-        sub:wikitext(wikitext)
+        if config.preprocess or config.preprocess == nil then
+            if not frame then frame = mw.getCurrentFrame() end
+            sub:wikitext(frame:preprocess(wikitext))
+        else
+            sub:wikitext(wikitext)
+        end
+
+        return sub
     end,
 
     -------------------------
@@ -931,7 +950,7 @@ local t = {
         end
     end,
 
-    setWikitext = function(self, elm, gui_object)
+    setWikitext = function(self, elm, gui_object, frame)
         local scale = gui_object.scale
 
         for _, wikitext in ipairs(gui_object.wikitext) do
@@ -940,9 +959,12 @@ local t = {
                     scale = scale,
                     x = wikitext.x,
                     y = wikitext.y,
+                    width = wikitext.width,
+                    height = wikitext.height,
                     css = wikitext.css,
                     class = wikitext.class,
-                })
+                    preprocess = wikitext.preprocess,
+                }, frame)
 
                 elm:node(sub)
             end
@@ -1113,6 +1135,7 @@ function GUI_METATABLE.create(gui_object)
     t.setTanks(t, gui, gui_object, tanklist)
     t.setGauge(t, gui, gui_object, gaugelist, gaugelimitlist)
     t.setText(t, gui, gui_object, textlist)
+    t.setWikitext(t, gui, gui_object, frame)
 
     return outer
 end
@@ -1186,10 +1209,6 @@ end
 function GUI_METATABLE.insertWikitext(gui_object, value, pos)
     if type(value) ~= "table" and type(value) ~= "string" then
         return error("The wikitext value must be a table or string.")
-    end
-
-    if not gui_object.wikitext then
-        gui_object.wikitext = {}
     end
 
     if type(value) == "table" then
@@ -1306,6 +1325,7 @@ function p.new(settings)
             tanks = {},
             gauges = {},
             text = {},
+            wikitext = {},
         }
     end
 
@@ -1314,6 +1334,7 @@ function p.new(settings)
     if not settings.tanks then settings.tanks = {} end
     if not settings.gauges then settings.gauges = {} end
     if not settings.text then settings.text = {} end
+    if not settings.wikitext then settings.wikitext = {} end
     settings.width = tonumber(settings.width) or 50
     settings.height = tonumber(settings.height) or 50
     settings.scale = tonumber(settings.scale) or 2

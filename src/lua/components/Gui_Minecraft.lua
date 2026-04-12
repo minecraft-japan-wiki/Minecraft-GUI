@@ -488,28 +488,178 @@ function p.Trading(f)
         f = mw.getCurrentFrame()
     end
 
+    -- level
+    local level = args.level
+    local levelIcon
+    local levelName
+    if type(level) == "string" then level = string.lower(level) end
+    if type(level) == "number" then level = tostring(level) end
+
+    if level == "1" or level == "novice" or level == "stone" or level == "êVïƒ" then
+        level = 1
+        levelIcon = "Profession level stone.png"
+        levelName = "êVïƒ"
+    elseif level == "2" or level == "apprentice" or level == "iron" or level == "å©èKÇ¢" then
+        level = 2
+        levelIcon = "Profession level iron.png"
+        levelName = "å©èKÇ¢"
+    elseif level == "3" or level == "journeyman" or level == "gold" or level == "àÍêlëO" then
+        level = 3
+        levelIcon = "Profession level gold.png"
+        levelName = "àÍêlëO"
+    elseif level == "4" or level == "expert" or level == "emerald" or level == "ènó˚é“" or level == "ènó˚" then
+        level = 4
+        levelIcon = "Profession level emerald.png"
+        levelName = "ènó˚é“"
+    elseif level == "5" or level == "master" or level == "diamond" or level == "íBêl" then
+        level = 5
+        levelIcon = "Profession level diamond.png"
+        levelName = "íBêl"
+    else
+        level = nil
+    end
+
+    -- professions
+    local prof = args.professions or args.profession or args.jobs or args.job
+    local profBlock
+    local profSprite
+    local profName
+    if type(prof) == "string" then prof = string.lower(prof) end
+    if prof == "armorer" or prof == "armorers" or prof == "ñhãÔíbñË" then
+        prof = "armorer"
+        profBlock = profBlock or "Blast Furnace"
+        profSprite = profSprite or "villager-armorer"
+        profName = "ñhãÔíbñË"
+    elseif prof == "butcher" or prof == "butchers" or prof == "ì˜âÆ" then
+        prof = "butcher"
+        profBlock = profBlock or "Smoker"
+        profSprite = profSprite or "villager-butcher"
+        profName = "ì˜âÆ"
+    elseif prof == "cartographer" or prof == "cartographers" or prof == "êªê}â∆" then
+        prof = "cartographer"
+        profBlock = profBlock or "Cartography Table"
+        profSprite = profSprite or "villager-cartographer"
+        profName = "êªê}â∆"
+    elseif prof == "cleric" or prof == "clerics" or prof == "êπêEé“" then
+        prof = "cleric"
+        profBlock = profBlock or "Brewing Stand"
+        profSprite = profSprite or "villager-cleric"
+        profName = "êπêEé“"
+    elseif prof == "farmer" or prof == "farmers" or prof == "î_ñØ" then
+        prof = "farmer"
+        profBlock = profBlock or "Composter"
+        profSprite = profSprite or "villager-farmer"
+        profName = "î_ñØ"
+    elseif prof == "fisherman" or prof == "fishermen" or prof == "íﬁÇËêl" then
+        prof = "fisherman"
+        profBlock = profBlock or "Barrel"
+        profSprite = profSprite or "villager-fisherman"
+        profName = "íﬁÇËêl"
+    elseif prof == "fletcher" or prof == "fletchers" or prof == "ñÓét" then
+        prof = "fletcher"
+        profBlock = profBlock or "Fletching Table"
+        profSprite = profSprite or "villager-fletcher"
+        profName = "ñÓét"
+    elseif prof == "leatherworker" or prof == "leatherworkers" or prof == "ävç◊çHét" then
+        prof = "leatherworker"
+        profBlock = profBlock or "Cauldron"
+        profSprite = profSprite or "villager-leatherworker"
+        profName = "ävç◊çHét"
+    elseif prof == "librarian" or prof == "librarians" or prof == "éièë" then
+        prof = "librarian"
+        profBlock = profBlock or "Lectern"
+        profSprite = profSprite or "villager-librarian"
+        profName = "éièë"
+    elseif prof == "mason" or prof == "masons" or prof == "êŒçH" then
+        prof = "mason"
+        profBlock = profBlock or "Stonecutter"
+        profSprite = profSprite or "villager-mason"
+        profName = "êŒçH"
+    elseif prof == "shepherd" or prof == "shepherds" or prof == "óréîÇ¢" then
+        prof = "shepherd"
+        profBlock = profBlock or "Loom"
+        profSprite = profSprite or "villager-shepherd"
+        profName = "óréîÇ¢"
+    elseif prof == "toolsmith" or prof == "toolsmiths" or prof == "ìπãÔíbñË" then
+        prof = "toolsmith"
+        profBlock = profBlock or "Smithing Table"
+        profSprite = profSprite or "villager-toolsmith"
+        profName = "ìπãÔíbñË"
+    elseif prof == "weaponsmith" or prof == "weaponsmiths" or prof == "ïêäÌíbñË" then
+        prof = "weaponsmith"
+        profBlock = profBlock or "Grindstone"
+        profSprite = profSprite or "villager-weaponsmith"
+        profName = "ïêäÌíbñË"
+    elseif prof == "wandering trader" or prof == "wandering traders" or prof == "çsè§êl" then
+        prof = "wandering trader"
+        profSprite = profSprite or "wandering-trader"
+        profName = "çsè§êl"
+    else
+        prof = nil
+    end
+
+    -- top text
+    local heightAddition = 0
+    local villagerText
+    if prof or level then
+        heightAddition = 15
+        if prof then
+            villagerText = string.format("{{EntitySprite|%s|text=%s|link=%s}}", profSprite, profName, profName)
+        end
+
+        if level then
+            if villagerText then
+                villagerText = villagerText .. " - "
+            else
+                villagerText = ""
+            end
+
+            --villagerText = villagerText .. string.format("[[File:%s|16px|link=]] %s", levelIcon, levelName)
+            villagerText = villagerText .. string.format("%s", levelName)
+        end
+    end
+
     local gui = GuiUtils.new({
         name = "trading",
         width = 106,
-        height = 26,
+        height = 26 + heightAddition,
         scale = 2,
         slots = {
-            { x = 0,  y = 3, value = args.input1 or args.input or args.slot1 or args[1] },
-            { x = 26, y = 3, value = args.input2 or args.slot2 or args[2] },
+            { x = 0,  y = 3 + heightAddition, value = args.input1 or args.input or args.slot1 or args[1] },
+            { x = 26, y = 3 + heightAddition, value = args.input2 or args.slot2 or args[2] },
             {
                 x = 80,
-                y = 0,
+                y = 0 + heightAddition,
                 amount = args.amount,
                 value = args.output1 or args.target1 or args.output or args.target or args.slot3 or args[3],
                 large = true,
             },
         },
         images = {
-            { file = "GUI Furnace Arrow.png", x = 51, y = 5, width = 22, height = 16 },
+            { file = "GUI Furnace Arrow.png", x = 51, y = 5 + heightAddition, width = 22, height = 16 },
         },
         border = args.border,
         padding = args.padding,
     })
+
+    if villagerText then
+        gui:insertWikitext({
+            wikitext = villagerText,
+            x = 0,
+            y = 4,
+            width = 106,
+            height = "auto",
+            class = {
+                "mjwgui-text"
+            },
+            css = {
+                ["text-align"] = "center",
+                ["line-height"] = "16px",
+                ["font-size"] = "16px"
+            },
+            preprocess = true,
+        })
+    end
 
     return tostring(gui)
 end
