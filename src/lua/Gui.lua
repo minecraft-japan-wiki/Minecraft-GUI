@@ -410,6 +410,60 @@ local t = {
         return sub
     end,
 
+    ------ generate wikitext
+    generateWikitext = function(wikitext, config, frame)
+        config = config or {}
+        local sub = mw.html.create("span")
+
+        -- scale
+        local scale = tonumber(config.scale) or 2
+
+        -- position
+        if type(config.x) == "number" and config.x ~= 0 then
+            sub:css("left", tostring(config.x * scale) .. "px")
+        end
+        if type(config.y) == "number" and config.y ~= 0 then
+            sub:css("top", tostring(config.y * scale) .. "px")
+        end
+
+        -- size
+        if type(config.width) == "number" and config.width ~= 0 then
+            sub:css("width", tostring(config.width * scale) .. "px")
+        elseif type(config.width) == "string" then
+            sub:css("width", config.width)
+        end
+        if type(config.height) == "number" and config.height ~= 0 then
+            sub:css("height", tostring(config.height * scale) .. "px")
+        elseif type(config.height) == "string" then
+            sub:css("height", config.height)
+        end
+
+        -- css
+        if config.css then
+            sub:css(config.css)
+        end
+
+        -- class
+        sub:addClass("mjwgui-wikitext")
+        if type(config.class) == "table" then
+            for _, c in ipairs(config.class) do
+                sub:addClass(c)
+            end
+        elseif type(config.class) == "string" then
+            sub:addClass(config.class)
+        end
+
+        -- show content
+        if config.preprocess or config.preprocess == nil then
+            if not frame then frame = mw.getCurrentFrame() end
+            sub:wikitext(frame:preprocess(wikitext))
+        else
+            sub:wikitext(wikitext)
+        end
+
+        return sub
+    end,
+
     -------------------------
     ------ create outer
     createOuter = function(gui_object)
@@ -549,15 +603,15 @@ local t = {
             :css("top", tostring(shapelessY * config.scale) .. "px")
             :css("cursor", "help")
             :wikitext(frame:preprocess('[[File:' .. shapelessFile .. '|link=|' .. shapelessText .. ']]'))
-        
+
         return sub
     end,
 
     setShapeless = function(self, elm, gui_object)
-        if type(gui_object.shapeless)=="table" then
+        if type(gui_object.shapeless) == "table" then
             local isShapeless = { false }
             local value = gui_object.shapeless.isShapeless
-            if type(value)=="string" and (gui_object.shapeless.animate == nil or gui_object.shapeless.animate) then
+            if type(value) == "string" and (gui_object.shapeless.animate == nil or gui_object.shapeless.animate) then
                 local items = split(value, ";")
                 for s, v in ipairs(items) do
                     isShapeless[s] = Yesno(trim(v or '')) or false
@@ -596,7 +650,7 @@ local t = {
                 for frame_no = 1, max_animation, 1 do
                     anim_frames[frame_no] = ""
                     local idx = getCurrentFrame(max_animation, length, frame_no)
-                    
+
                     if isShapeless[idx] then
                         local sub = self.generateShapeless({
                             x = gui_object.shapeless.x,
@@ -895,6 +949,27 @@ local t = {
             end
         end
     end,
+
+    setWikitext = function(self, elm, gui_object, frame)
+        local scale = gui_object.scale
+
+        for _, wikitext in ipairs(gui_object.wikitext) do
+            if type(wikitext) == "table" and type(wikitext.wikitext) == "string" then
+                local sub = self.generateWikitext(wikitext.wikitext, {
+                    scale = scale,
+                    x = wikitext.x,
+                    y = wikitext.y,
+                    width = wikitext.width,
+                    height = wikitext.height,
+                    css = wikitext.css,
+                    class = wikitext.class,
+                    preprocess = wikitext.preprocess,
+                }, frame)
+
+                elm:node(sub)
+            end
+        end
+    end,
 }
 
 -------------------------
@@ -1060,6 +1135,7 @@ function GUI_METATABLE.create(gui_object)
     t.setTanks(t, gui, gui_object, tanklist)
     t.setGauge(t, gui, gui_object, gaugelist, gaugelimitlist)
     t.setText(t, gui, gui_object, textlist)
+    t.setWikitext(t, gui, gui_object, frame)
 
     return outer
 end
@@ -1130,6 +1206,27 @@ function GUI_METATABLE.insertText(gui_object, value, pos)
     end
 end
 
+function GUI_METATABLE.insertWikitext(gui_object, value, pos)
+    if type(value) ~= "table" and type(value) ~= "string" then
+        return error("The wikitext value must be a table or string.")
+    end
+
+    if type(value) == "table" then
+        if pos == nil then
+            table.insert(gui_object.wikitext, value)
+        else
+            table.insert(gui_object.wikitext, pos, value)
+        end
+        return gui_object
+    elseif type(value) == "string" then
+        if pos == nil then
+            table.insert(gui_object.wikitext, { wikitext = value })
+        else
+            table.insert(gui_object.wikitext, pos, { wikitext = value })
+        end
+    end
+end
+
 -- change
 function GUI_METATABLE.changeSlot(gui_object, value, pos)
     if type(value) ~= "table" then return error("The slot value must be a table.") end
@@ -1161,6 +1258,30 @@ function GUI_METATABLE.changeImage(gui_object, value, pos)
     end
 
     return gui_object
+end
+
+function GUI_METATABLE.changeWikitext(gui_object, value, pos)
+    if type(value) ~= "table" and type(value) ~= "string" then
+        return error("The wikitext value must be a table or string.")
+    end
+    pos = tonumber(pos)
+    if pos == nil then return error("The index value must be a number.") end
+
+    if type(value) == "table" then
+        if not gui_object.wikitext[pos] then
+            gui_object.wikitext[pos] = value
+        else
+            for k, v in pairs(value) do
+                gui_object.wikitext[pos][k] = v
+            end
+        end
+    elseif type(value) == "string" then
+        if not gui_object.wikitext[pos] then
+            gui_object.wikitext[pos] = { wikitext = value }
+        else
+            gui_object.wikitext[pos].wikitext = value
+        end
+    end
 end
 
 -- set value
@@ -1204,6 +1325,7 @@ function p.new(settings)
             tanks = {},
             gauges = {},
             text = {},
+            wikitext = {},
         }
     end
 
@@ -1212,6 +1334,7 @@ function p.new(settings)
     if not settings.tanks then settings.tanks = {} end
     if not settings.gauges then settings.gauges = {} end
     if not settings.text then settings.text = {} end
+    if not settings.wikitext then settings.wikitext = {} end
     settings.width = tonumber(settings.width) or 50
     settings.height = tonumber(settings.height) or 50
     settings.scale = tonumber(settings.scale) or 2
