@@ -135,6 +135,44 @@ function p.MetalPress(f)
     return tostring(gui)
 end
 
+function p.CokeOven(f)
+    local args = f
+    if f == mw.getCurrentFrame() then
+        args = require('Module:ProcessArgs').merge(true)
+    else
+        f = mw.getCurrentFrame()
+    end
+
+    local gui = GuiUtils.new({
+        name = "ie-coke-oven",
+        width = 123,
+        height = 55,
+        scale = 2,
+        slots = {
+            { x = 2,  y = 18, value = args.input1 or args.input or args.slot1 or args[1],                                  background = false },
+            { x = 54, y = 14, value = args.output1 or args.target1 or args.output or args.target or args.slot2 or args[2], background = false, large = true },
+        },
+        images = {
+            { x = 0,  y = 0,  width = 123, height = 55, file = "GUI IE Coke Oven Base.png" },
+            { x = 33, y = 21, width = 9,   height = 12, file = "GUI IE Blast Furnace Fire.png", progress = "up", reverse = true, duration = 10 },
+        },
+        tanks = {
+            {
+                x = 102,
+                y = 3,
+                width = 18,
+                height = 49,
+                max = 12500,
+                value = args.output2 or args.tank1 or args.tank or args.slot3 or args[3],
+            }
+        },
+        border = args.border,
+        padding = args.padding,
+    })
+
+    return tostring(gui)
+end
+
 function p.Crusher(f)
     local args = f
     if f == mw.getCurrentFrame() then
