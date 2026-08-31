@@ -10,7 +10,7 @@ function p.AlloyKiln(f)
     end
 
     local gui = GuiUtils.new({
-        name = "ie-alloy-smelter",
+        name = "ie-alloy-kiln",
         width = 113,
         height = 61,
         scale = 2,
