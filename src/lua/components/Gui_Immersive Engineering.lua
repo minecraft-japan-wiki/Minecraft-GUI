@@ -121,7 +121,7 @@ function p.MetalPress(f)
         height = 46,
         scale = 2,
         slots = {
-            { x = 0,  y = 12, value = args.input1 or args.crop or args.input or args.slot1 or args[1] },
+            { x = 0,  y = 12, value = args.input1 or args.input or args.slot1 or args[1] },
             { x = 82, y = 12, value = args.output1 or args.target1 or args.output or args.target or args.slot2 or args[2] },
             { x = 56, y = 0,  value = args.input2 or args.mold or args.slot3 or args[3] },
         },
