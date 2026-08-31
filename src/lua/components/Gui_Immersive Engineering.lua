@@ -240,4 +240,242 @@ function p.Workbench(f)
     return tostring(gui)
 end
 
+function p.BottlingMachine(f)
+    local args = f
+    if f == mw.getCurrentFrame() then
+        args = require('Module:ProcessArgs').merge(true)
+    else
+        f = mw.getCurrentFrame()
+    end
+
+    local gui = GuiUtils.new({
+        name = "ie-bottling-machine",
+        width = 118,
+        height = 54,
+        scale = 2,
+        slots = {
+            { x = 0,   y = 0,  value = args.input1 or args.input or args.slot1 or args[1] },
+            { x = 0,   y = 18, value = args.input2 or args.slot2 or args[2] },
+            { x = 0,   y = 36, value = args.input3 or args.slot3 or args[3] },
+            { x = 100, y = 0,  value = args.output1 or args.target1 or args.output or args.target or args.slot5 or args[5] },
+            { x = 100, y = 18, value = args.output2 or args.target2 or args.slot6 or args[6] },
+            { x = 100, y = 36, value = args.output3 or args.target3 or args.slot7 or args[7] },
+        },
+        images = {
+            { x = 45, y = 6, width = 43, height = 37, file = "GUI IE Bottling Machine.png" }
+        },
+        tanks = {
+            {
+                x = 23,
+                y = 0,
+                width = 18,
+                height = 54,
+                max = 1000,
+                value = args.input4 or args.tank1 or args.tank or args.slot4 or args[4],
+                background = true,
+            }
+        },
+        border = args.border,
+        padding = args.padding,
+    })
+
+    return tostring(gui)
+end
+
+function p.Squeezer(f)
+    local args = f
+    if f == mw.getCurrentFrame() then
+        args = require('Module:ProcessArgs').merge(true)
+    else
+        f = mw.getCurrentFrame()
+    end
+
+    local gui = GuiUtils.new({
+        name = "ie-squeezer",
+        width = 125,
+        height = 65,
+        scale = 2,
+        slots = {
+            { x = 0,  y = 22, value = args.input1 or args.input or args.slot1 or args[1],                                  background = false },
+            { x = 18, y = 22, value = args.input2 or args.slot2 or args[2],                                                background = false },
+            { x = 36, y = 22, value = args.input3 or args.slot3 or args[3],                                                background = false },
+            { x = 54, y = 22, value = args.input4 or args.slot4 or args[4],                                                background = false },
+            { x = 0,  y = 40, value = args.input5 or args.slot5 or args[5],                                                background = false },
+            { x = 18, y = 40, value = args.input2 or args.slot6 or args[6],                                                background = false },
+            { x = 36, y = 40, value = args.input3 or args.slot7 or args[7],                                                background = false },
+            { x = 54, y = 40, value = args.input4 or args.slot8 or args[8],                                                background = false },
+            { x = 83, y = 40, value = args.output1 or args.target1 or args.output or args.target or args.slot9 or args[9], background = false },
+        },
+        images = {
+            { x = 0, y = 0, width = 125, height = 65, file = "GUI IE Squeezer Base.png" }
+        },
+        tanks = {
+            {
+                x = 104,
+                y = 8,
+                width = 18,
+                height = 49,
+                max = 250,
+                value = args.output2 or args.tank1 or args.tank or args.slot10 or args[10],
+                background = false,
+            }
+        },
+        border = args.border,
+        padding = args.padding,
+    })
+
+    return tostring(gui)
+end
+
+function p.Refinery(f)
+    local args = f
+    if f == mw.getCurrentFrame() then
+        args = require('Module:ProcessArgs').merge(true)
+    else
+        f = mw.getCurrentFrame()
+    end
+
+    local gui = GuiUtils.new({
+        name = "ie-refinery",
+        width = 125,
+        height = 57,
+        scale = 2,
+        slots = {
+            { x = 66, y = 10, value = args.input3 or args.slot3 or args[3], background = false },
+        },
+        images = {
+            { x = 0, y = 0, width = 125, height = 57, file = "GUI IE Refinery Base.png" }
+        },
+        tanks = {
+            {
+                x = 6,
+                y = 4,
+                width = 18,
+                height = 49,
+                max = 100,
+                value = args.input1 or args.input or args.tank1 or args.tank or args.slot1 or args[1],
+                background = false,
+            },
+            {
+                x = 33,
+                y = 4,
+                width = 18,
+                height = 49,
+                max = 100,
+                value = args.input2 or args.tank2 or args.slot2 or args[2],
+                background = false,
+            },
+            {
+                x = 102,
+                y = 4,
+                width = 18,
+                height = 49,
+                max = 100,
+                value = args.output1 or args.target1 or args.output or args.target or args.tank3 or args.slot4 or args
+                [4],
+                background = false,
+            }
+        },
+        border = args.border,
+        padding = args.padding,
+    })
+
+    return tostring(gui)
+end
+
+function p.Fermenter(f)
+    local args = f
+    if f == mw.getCurrentFrame() then
+        args = require('Module:ProcessArgs').merge(true)
+    else
+        f = mw.getCurrentFrame()
+    end
+
+    local gui = GuiUtils.new({
+        name = "ie-fermenter",
+        width = 125,
+        height = 65,
+        scale = 2,
+        slots = {
+            { x = 1,  y = 12, value = args.input1 or args.input or args.slot1 or args[1],                                  background = false },
+            { x = 19, y = 12, value = args.input2 or args.slot2 or args[2],                                                background = false },
+            { x = 37, y = 12, value = args.input3 or args.slot3 or args[3],                                                background = false },
+            { x = 55, y = 12, value = args.input4 or args.slot4 or args[4],                                                background = false },
+            { x = 1,  y = 30, value = args.input5 or args.slot5 or args[5],                                                background = false },
+            { x = 19, y = 30, value = args.input2 or args.slot6 or args[6],                                                background = false },
+            { x = 37, y = 30, value = args.input3 or args.slot7 or args[7],                                                background = false },
+            { x = 55, y = 30, value = args.input4 or args.slot8 or args[8],                                                background = false },
+            { x = 84, y = 46, value = args.output1 or args.target1 or args.output or args.target or args.slot9 or args[9], background = false },
+        },
+        images = {
+            { x = 0, y = 0, width = 125, height = 65, file = "GUI IE Fermenter Base.png" }
+        },
+        tanks = {
+            {
+                x = 105,
+                y = 15,
+                width = 18,
+                height = 49,
+                max = 250,
+                value = args.output2 or args.tank1 or args.tank or args.slot10 or args[10],
+                background = false,
+            }
+        },
+        border = args.border,
+        padding = args.padding,
+    })
+
+    return tostring(gui)
+end
+
+function p.Mixer(f)
+    local args = f
+    if f == mw.getCurrentFrame() then
+        args = require('Module:ProcessArgs').merge(true)
+    else
+        f = mw.getCurrentFrame()
+    end
+
+    local gui = GuiUtils.new({
+        name = "ie-mixer",
+        width = 136,
+        height = 60,
+        scale = 2,
+        slots = {
+            { x = 0,  y = 0,  value = args.input1 or args.input or args.slot1 or args[1] },
+            { x = 18, y = 0,  value = args.input2 or args.slot2 or args[2] },
+            { x = 0,  y = 18, value = args.input3 or args.slot3 or args[3] },
+            { x = 18, y = 18, value = args.input4 or args.slot4 or args[4] }
+        },
+        images = {
+            { x = 40, y = 0, width = 74, height = 60, file = "GUI IE Mixer Base.png" }
+        },
+        tanks = {
+            {
+                x = 47,
+                y = 2,
+                width = 60,
+                height = 49,
+                max = 2000,
+                value = args.input5 or args.tank1 or args.tank or args.slot5 or args[5],
+                background = false,
+            },
+            {
+                x = 118,
+                y = 2,
+                width = 18,
+                height = 49,
+                max = 2000,
+                value = args.output1 or args.target1 or args.output or args.target or args.tank2 or args.slot6 or args
+                [6],
+                background = true,
+            }
+        },
+        border = args.border,
+        padding = args.padding,
+    })
+
+    return tostring(gui)
+end
+
 return p

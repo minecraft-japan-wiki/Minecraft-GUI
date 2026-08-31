@@ -549,15 +549,15 @@ local t = {
             :css("top", tostring(shapelessY * config.scale) .. "px")
             :css("cursor", "help")
             :wikitext(frame:preprocess('[[File:' .. shapelessFile .. '|link=|' .. shapelessText .. ']]'))
-        
+
         return sub
     end,
 
     setShapeless = function(self, elm, gui_object)
-        if type(gui_object.shapeless)=="table" then
+        if type(gui_object.shapeless) == "table" then
             local isShapeless = { false }
             local value = gui_object.shapeless.isShapeless
-            if type(value)=="string" and (gui_object.shapeless.animate == nil or gui_object.shapeless.animate) then
+            if type(value) == "string" and (gui_object.shapeless.animate == nil or gui_object.shapeless.animate) then
                 local items = split(value, ";")
                 for s, v in ipairs(items) do
                     isShapeless[s] = Yesno(trim(v or '')) or false
@@ -596,7 +596,7 @@ local t = {
                 for frame_no = 1, max_animation, 1 do
                     anim_frames[frame_no] = ""
                     local idx = getCurrentFrame(max_animation, length, frame_no)
-                    
+
                     if isShapeless[idx] then
                         local sub = self.generateShapeless({
                             x = gui_object.shapeless.x,
