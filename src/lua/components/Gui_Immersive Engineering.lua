@@ -1,7 +1,7 @@
 local p = {}
 local GuiUtils = require("Module:Gui")
 
-function p.AlloySmelter(f)
+function p.AlloyKiln(f)
     local args = f
     if f == mw.getCurrentFrame() then
         args = require('Module:ProcessArgs').merge(true)
@@ -32,6 +32,50 @@ function p.AlloySmelter(f)
     return tostring(gui)
 end
 
+function p.ArcFurnace(f)
+    local args = f
+    if f == mw.getCurrentFrame() then
+        args = require('Module:ProcessArgs').merge(true)
+    else
+        f = mw.getCurrentFrame()
+    end
+
+    local gui = GuiUtils.new({
+        name = "ie-arc-furnace",
+        width = 128,
+        height = 54,
+        scale = 2,
+        slots = {
+            { x = 8,  y = 0,  value = args.input1 or args.input or args.slot1 or args[1], },
+            { x = 0,  y = 18, value = args.input2 or args.slot2 or args[2], },
+            { x = 18, y = 18, value = args.input3 or args.slot3 or args[3], },
+            { x = 0,  y = 36, value = args.input4 or args.slot4 or args[4], },
+            { x = 18, y = 36, value = args.input5 or args.slot5 or args[5], },
+            { x = 68, y = 0,  value = args.output1 or args.target1 or args.output or args.target or args.slot6 or args[6] },
+            { x = 88, y = 0,  value = args.output2 or args.target2 or args.slot7 or args[7], },
+            { x = 68, y = 36, value = args.output3 or args.target3 or args.slot8 or args[8], },
+        },
+        images = {
+            { x = 41, y = 11, width = 22, height = 15, file = "GUI IE Arc Furnace Arrow.png" },
+        },
+        text = {
+            {
+                x = 107,
+                y = 6,
+                size = 14,
+                value = args.chance1 or args.text1 or args.chance or args.text or args[9],
+                suffix = "%",
+                animate = true,
+                css = { color = "#808080" }
+            },
+        },
+        border = args.border,
+        padding = args.padding,
+    })
+
+    return tostring(gui)
+end
+
 function p.BlastFurnace(f)
     local args = f
     if f == mw.getCurrentFrame() then
@@ -49,7 +93,7 @@ function p.BlastFurnace(f)
             { x = 3,  y = 8,  value = args.input1 or args.input or args.slot1 or args[1],                                  background = false },
             { x = 3,  y = 44, value = args.input2 or args.fuel or args.slot2 or args[2],                                   background = false },
             { x = 59, y = 4,  value = args.output1 or args.target1 or args.output or args.target or args.slot3 or args[3], large = true,      background = false },
-            { x = 63, y = 44, value = args.output2 or args.target2 or args[4],                                             background = false },
+            { x = 63, y = 44, value = args.output2 or args.target2 or args.slot4 or args[4],                               background = false },
         },
         images = {
             { x = 0,  y = 0,  width = 89, height = 65, file = "GUI IE Blast Furnace Base.png" },
@@ -105,7 +149,7 @@ function p.Crusher(f)
         height = 40,
         scale = 2,
         slots = {
-            { x = 0,  y = 13, value = args.input1 or args.crop or args.input or args.slot1 or args[1] },
+            { x = 0,  y = 13, value = args.input1 or args.input or args.slot1 or args[1] },
             { x = 76, y = 3,  value = args.output1 or args.target1 or args.output or args.target or args.slot2 or args[2] },
             { x = 76, y = 21, value = args.output2 or args.target2 or args.slot3 or args[3] },
         },
@@ -372,7 +416,7 @@ function p.Refinery(f)
                 height = 49,
                 max = 100,
                 value = args.output1 or args.target1 or args.output or args.target or args.tank3 or args.slot4 or args
-                [4],
+                    [4],
                 background = false,
             }
         },
@@ -467,7 +511,7 @@ function p.Mixer(f)
                 height = 49,
                 max = 2000,
                 value = args.output1 or args.target1 or args.output or args.target or args.tank2 or args.slot6 or args
-                [6],
+                    [6],
                 background = true,
             }
         },
