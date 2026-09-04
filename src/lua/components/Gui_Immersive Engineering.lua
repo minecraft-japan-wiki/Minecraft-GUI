@@ -18,7 +18,7 @@ function p.AlloyKiln(f)
             { x = 5,  y = 4,  value = args.input1 or args.input or args.slot1 or args[1],                                  background = false },
             { x = 33, y = 4,  value = args.input2 or args.slot2 or args[2],                                                background = false },
             { x = 33, y = 4,  value = args.input3 or args.fuel or args.slot3 or args[3],                                   background = false },
-            { x = 83, y = 18, value = args.output1 or args.target1 or args.output or args.target or args.slot4 or args[4], large = true,      background = false },
+            { x = 82, y = 17, value = args.output1 or args.target1 or args.output or args.target or args.slot4 or args[4], large = true,      background = false },
         },
         images = {
             { x = 0,  y = 0,  width = 113, height = 61, file = "GUI IE Alloy Smelter Base.png" },
@@ -398,7 +398,7 @@ function p.Squeezer(f)
                 width = 18,
                 height = 49,
                 max = 250,
-                value = args.output2 or args.tank1 or args.tank or args.slot10 or args[10],
+                value = args.output2 or args.target2 or args.tank1 or args.tank or args.slot10 or args[10],
                 background = false,
             }
         },
