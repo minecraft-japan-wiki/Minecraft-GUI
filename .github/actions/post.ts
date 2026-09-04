@@ -92,6 +92,7 @@ async function main() {
         { target: "src/lua/components/Gui_Industrial Revolution by Redstone.lua", dist: "Module:Gui/Industrial Revolution by Redstone" },
         { target: "src/lua/components/Gui_RedPower2.lua", dist: "Module:Gui/RedPower2" },
         { target: "src/lua/components/Gui_Railcraft.lua", dist: "Module:Gui/Railcraft" },
+        { target: "src/lua/components/Gui_Immersive Engineering.lua", dist: "Module:Gui/Immersive Engineering" },
     ]
 
     for (let i = 0; i < data.length; i++) {
